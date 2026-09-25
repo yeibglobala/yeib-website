@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, useInView, useAnimation } from "framer-motion";
+import React from "react";
+import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface FadeInProps extends React.HTMLAttributes<HTMLDivElement> {
+interface FadeInProps extends HTMLMotionProps<"div"> {
   delay?: number;
   direction?: "up" | "down" | "left" | "right" | "none";
 }
@@ -16,21 +16,6 @@ export function FadeIn({
   direction = "up",
   ...props
 }: FadeInProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -50px 0px" });
-  const controls = useAnimation();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (isInView && mounted) {
-      controls.start("visible");
-    }
-  }, [isInView, controls, mounted]);
-
   // Normalize delay: if it's > 10, it's likely ms, otherwise it's seconds
   const normalizedDelay = delay > 10 ? delay / 1000 : delay;
 
@@ -48,15 +33,15 @@ export function FadeIn({
 
   return (
     <motion.div
-      ref={ref}
       initial="hidden"
-      animate={controls}
+      whileInView="visible"
+      viewport={{ once: true, margin: "0px 0px -50px 0px" }}
       variants={{
         hidden: { opacity: 0, ...offset },
         visible: { 
           opacity: 1, 
           x: 0, 
-          y: 0,
+          y: 0, 
           transition: { 
             type: "spring",
             damping: 25,
@@ -67,7 +52,7 @@ export function FadeIn({
         }
       }}
       className={cn(className)}
-      {...(props as any)}
+      {...props}
     >
       {children}
     </motion.div>

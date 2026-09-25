@@ -1,12 +1,49 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, X, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
+import { submitGrievanceAction } from "@/lib/email/actions";
 
 export function ESGContactChannels() {
   const [showGrievanceForm, setShowGrievanceForm] = useState(false);
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleGrievanceSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus("submitting");
+    setErrorMessage("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const honeypot = (formData.get("website_url_hp") as string) || "";
+    const fullName = (formData.get("fullName") as string) || "";
+    const contactInfo = (formData.get("contactInfo") as string) || "";
+    const projectLocation = (formData.get("projectLocation") as string) || "";
+    const details = (formData.get("details") as string) || "";
+
+    try {
+      const result = await submitGrievanceAction({
+        fullName,
+        contactInfo,
+        projectLocation,
+        details,
+        honeypot,
+      });
+
+      if (result.success) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+        setErrorMessage(result.message || "Failed to submit grievance. Please try again.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMessage("An unexpected error occurred. Please try again later.");
+    }
+  };
 
   const channels = [
     {
@@ -14,7 +51,10 @@ export function ESGContactChannels() {
       title: "GRIEVANCE REDRESS",
       desc: "For project-affected persons and communities to raise environmental, social, or project-related concerns. Raising a grievance will not result in retaliation or affect your access to YEIB financing.",
       actionText: "Submit a Grievance",
-      action: () => setShowGrievanceForm(true)
+      action: () => {
+        setStatus("idle");
+        setShowGrievanceForm(true);
+      }
     },
     {
       num: "02",
@@ -138,37 +178,89 @@ export function ESGContactChannels() {
             <h2 className="font-[var(--font-asul)] text-4xl font-bold text-[var(--color-evergreen)] mb-2 capitalize">Submit a Grievance</h2>
             <p className="text-sm text-[var(--color-evergreen)]/70 mb-8 font-medium">This form is for environmental, social, or project-related concerns. You will not face retaliation for submitting a grievance.</p>
             
-            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Form submitted successfully."); setShowGrievanceForm(false); }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Full Name (Optional)</label>
-                  <input type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="Jane Doe" />
+            {status === "success" ? (
+              <div className="py-8 text-center space-y-4">
+                <CheckCircle2 className="w-12 h-12 text-[var(--color-evergreen)] mx-auto" />
+                <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)]">
+                  Grievance Registered Securely
+                </h3>
+                <p className="text-sm text-[var(--color-evergreen)]/80 max-w-md mx-auto">
+                  Thank you for speaking up. Your report has been dispatched to the YEIB ESG Compliance & Grievance Redress unit under strict NDPR confidentiality.
+                </p>
+                <div className="pt-4">
+                  <Button
+                    type="button"
+                    className="bg-[var(--color-evergreen)] text-white hover:bg-[var(--color-evergreen)]/90 rounded-none py-4 px-6 text-xs uppercase tracking-widest"
+                    onClick={() => {
+                      setStatus("idle");
+                      setShowGrievanceForm(false);
+                    }}
+                  >
+                    Close
+                  </Button>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Email or Phone Number</label>
-                  <input type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="How can we reach you?" required />
+              </div>
+            ) : (
+              <form className="space-y-6" onSubmit={handleGrievanceSubmit}>
+                {/* Honeypot field */}
+                <input
+                  type="text"
+                  name="website_url_hp"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  style={{ display: "none" }}
+                  aria-hidden="true"
+                />
+
+                {status === "error" && (
+                  <div className="flex items-start gap-2 p-3 bg-red-100 text-red-800 text-xs">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{errorMessage || "Submission failed. Please try again."}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Full Name (Optional)</label>
+                    <input name="fullName" type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="Jane Doe" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Email or Phone Number *</label>
+                    <input name="contactInfo" type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="How can we reach you?" required />
+                  </div>
                 </div>
-              </div>
-              
-              <div>
-                <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Project / Location</label>
-                <input type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="Which project does this concern?" required />
-              </div>
-              
-              <div>
-                <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Details of the Grievance</label>
-                <textarea rows={5} className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none resize-none" placeholder="Please provide as much detail as possible..." required></textarea>
-              </div>
-              
-              <div className="pt-8 flex flex-col sm:flex-row justify-end gap-4">
-                <Button type="button" variant="secondary" className="bg-transparent border border-[var(--color-evergreen)]/30 rounded-none py-6 capitalize tracking-widest text-xs" onClick={() => setShowGrievanceForm(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-[var(--color-tiger-orange)] hover:bg-orange-600 text-white rounded-none py-6 capitalize tracking-widest text-xs">
-                  Submit Securely
-                </Button>
-              </div>
-            </form>
+                
+                <div>
+                  <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Project / Location *</label>
+                  <input name="projectLocation" type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="Which project does this concern?" required />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Details of the Grievance *</label>
+                  <textarea name="details" rows={5} className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none resize-none" placeholder="Please provide as much detail as possible..." required></textarea>
+                </div>
+                
+                <div className="pt-8 flex flex-col sm:flex-row justify-end gap-4">
+                  <Button type="button" variant="secondary" className="bg-transparent border border-[var(--color-evergreen)]/30 rounded-none py-6 capitalize tracking-widest text-xs" onClick={() => setShowGrievanceForm(false)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    disabled={status === "submitting"}
+                    className="bg-[var(--color-tiger-orange)] hover:bg-orange-600 text-white rounded-none py-6 capitalize tracking-widest text-xs flex items-center justify-center gap-2"
+                  >
+                    {status === "submitting" ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Submitting Securely...</span>
+                      </>
+                    ) : (
+                      "Submit Securely"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

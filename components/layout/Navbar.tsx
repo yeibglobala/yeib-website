@@ -28,6 +28,8 @@ export function Navbar() {
             width={240} 
             height={64}
             unoptimized={true}
+            priority
+            style={{ width: "auto" }}
             className="h-6 sm:h-8 md:h-10 w-auto object-contain"
           />
         </Link>

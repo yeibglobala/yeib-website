@@ -11,7 +11,7 @@ export function TheChallenge() {
             
             <div className="relative z-10">
               <span className="text-[var(--color-tiger-orange)] font-bold tracking-widest text-sm capitalize mb-8 block">
-                If you've got 5 seconds...
+                If you&apos;ve got 5 seconds...
               </span>
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight tracking-tight max-w-4xl">
                 Ambition was never the problem.<br />Access was.

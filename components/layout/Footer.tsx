@@ -16,6 +16,7 @@ export function Footer() {
                 alt="YEIB Investment Fund" 
                 width={160} 
                 height={40}
+                style={{ width: "auto" }}
                 className="h-10 w-auto object-contain"
               />
             </div>
@@ -23,9 +24,11 @@ export function Footer() {
               The institutional bridge between capital and ambition, empowering youth-led and women-led MSMEs across Nigeria.
             </p>
             <div className="flex gap-4">
-              <Button variant="secondary" className="bg-white/10 text-white border-none hover:bg-white/20">
-                Contact Us
-              </Button>
+              <Link href="/contact">
+                <Button variant="secondary" className="bg-white/10 text-white border-none hover:bg-white/20">
+                  Contact Us
+                </Button>
+              </Link>
             </div>
           </div>
           
@@ -36,6 +39,8 @@ export function Footer() {
               <li><Link href="/entrepreneurs" className="hover:text-white transition-colors">Who We Serve</Link></li>
               <li><Link href="/impact" className="hover:text-white transition-colors">Impact</Link></li>
               <li><Link href="/investors" className="hover:text-white transition-colors">Partners</Link></li>
+              <li><Link href="/esg" className="hover:text-white transition-colors">ESG</Link></li>
+              <li><Link href="/apply" className="hover:text-white transition-colors">Apply for Funding</Link></li>
             </ul>
           </div>
           

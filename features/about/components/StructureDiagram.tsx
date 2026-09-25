@@ -1,6 +1,6 @@
 import { FadeIn } from "@/components/ui/FadeIn";
 import { Tag } from "@/components/ui/Tag";
-import { ArrowRight, ArrowDown } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 
 export function StructureDiagram() {
   return (
@@ -63,7 +63,7 @@ export function StructureDiagram() {
             <div className="bg-white/5 border border-white/10 p-6 rounded-2xl">
               <h4 className="font-bold text-[#2E86AB] mb-3">Credit Guarantee Fund</h4>
               <p className="text-xs text-white/70 leading-relaxed">
-                Managed via DBN's Impact Credit Guarantee Limited (ICGL) ring-fenced youth window.
+                Managed via DBN&apos;s Impact Credit Guarantee Limited (ICGL) ring-fenced youth window.
               </p>
             </div>
             <div className="bg-white/5 border border-white/10 p-6 rounded-2xl">

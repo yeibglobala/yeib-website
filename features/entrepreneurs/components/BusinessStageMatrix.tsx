@@ -1,6 +1,5 @@
 "use client";
 
-import { FadeIn } from "@/components/ui/FadeIn";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";

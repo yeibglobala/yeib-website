@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { FadeIn } from "@/components/ui/FadeIn";
 import { Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";

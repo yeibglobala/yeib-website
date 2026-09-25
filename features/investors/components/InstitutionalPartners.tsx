@@ -64,7 +64,7 @@ export function InstitutionalPartners() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg text-[var(--color-evergreen)]/60 max-w-md font-medium"
           >
-            A multi-country financial initiative anchored by Africa's leading sovereign and development institutions.
+            A multi-country financial initiative anchored by Africa&apos;s leading sovereign and development institutions.
           </motion.p>
         </div>
 

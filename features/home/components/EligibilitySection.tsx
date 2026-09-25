@@ -5,12 +5,6 @@ import { CountUp } from "@/components/ui/CountUp";
 import { UserIcon, UsersIcon, BuildingIcon, TargetIcon } from "lucide-react";
 
 export function EligibilitySection() {
-  const tags = [
-    "Agriculture", "Creative Industries", "Trade", "ICT", 
-    "Women-led", "Youth-led", "Climate Resilient", "Digitally Enabled",
-    "Inter/Intra-regional Trade"
-  ];
-  
   const goals = [
     { value: "$300M", label: "Total capitalisation target", status: "" },
     { value: "$100M", label: "AfDB sovereign loan", status: "" },

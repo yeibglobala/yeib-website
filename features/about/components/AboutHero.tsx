@@ -1,6 +1,5 @@
 import { FadeIn } from "@/components/ui/FadeIn";
 import { Button } from "@/components/ui/Button";
-import Image from "next/image";
 import Link from "next/link";
 
 export function AboutHero() {

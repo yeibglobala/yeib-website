@@ -1,5 +1,4 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { Tag } from "@/components/ui/Tag";
 import Image from "next/image";
 
 export function ESGPartnerships() {

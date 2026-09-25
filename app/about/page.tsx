@@ -1,7 +1,6 @@
 import { AboutHero } from "@/features/about/components/AboutHero";
 import { TheChallenge } from "@/features/about/components/TheChallenge";
 import { OurApproach } from "@/features/about/components/OurApproach";
-import { AllySection } from "@/features/about/components/AllySection";
 import { TransparencyFramework } from "@/features/about/components/TransparencyFramework";
 import { Governance } from "@/features/about/components/Governance";
 import { SweetSpot } from "@/features/about/components/SweetSpot";

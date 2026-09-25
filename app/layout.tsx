@@ -35,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${asul.variable} ${chivo.variable} ${generalSans.variable}`}>
-      <body className="antialiased min-h-screen flex flex-col">
+    <html lang="en" className={`${asul.variable} ${chivo.variable} ${generalSans.variable}`} suppressHydrationWarning>
+      <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

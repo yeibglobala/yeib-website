@@ -1,28 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useEffect, useRef, useState } from "react";
 
 export function CountUp({ text }: { text: string }) {
   const domRef = useRef<HTMLSpanElement>(null);
+  const [displayValue, setDisplayValue] = useState(text);
 
   useEffect(() => {
     // 1. Remove commas so the regex can capture continuous numbers properly
     const sanitizedText = text.replace(/,/g, "");
-    
+
     // 2. Capture (prefix) (number) (suffix)
     const match = sanitizedText.match(/(.*?)(\d+(?:\.\d+)?)(.*)/);
-    
-    if (!match || !domRef.current) {
+
+    const currentRef = domRef.current;
+    if (!match || !currentRef) {
       return;
     }
-    
+
     const prefix = match[1];
     const targetValue = parseFloat(match[2]);
     const suffix = match[3];
     const isFloat = match[2].includes(".");
     const decimals = isFloat ? match[2].split(".")[1].length : 0;
-    
+
     const formatNumber = (val: number) => {
       if (isFloat) {
         return val.toFixed(decimals);
@@ -30,55 +31,52 @@ export function CountUp({ text }: { text: string }) {
       return Math.floor(val).toLocaleString("en-US");
     };
 
-    const targetObj = { val: 0 };
-    let animation: gsap.core.Tween | null = null;
-    
+    let animationFrameId: number | null = null;
+    let startTime: number | null = null;
+    const duration = 2000; // 2 seconds
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      // ease-out power2 (1 - (1 - progress)^2)
+      const easeOut = 1 - Math.pow(1 - progress, 2);
+      const currentVal = targetValue * easeOut;
+
+      setDisplayValue(`${prefix}${formatNumber(currentVal)}${suffix}`);
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(`${prefix}${formatNumber(targetValue)}${suffix}`);
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Reset to 0 and animate up every time it enters the viewport
-            targetObj.val = 0;
-            if (domRef.current) {
-              domRef.current.innerText = `${prefix}${formatNumber(0)}${suffix}`;
-            }
-            
-            animation = gsap.to(targetObj, {
-              val: targetValue,
-              duration: 2.5,
-              ease: "power2.out",
-              onUpdate: () => {
-                if (domRef.current) {
-                  domRef.current.innerText = `${prefix}${formatNumber(targetObj.val)}${suffix}`;
-                }
-              }
-            });
+            startTime = null;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            setDisplayValue(`${prefix}${formatNumber(0)}${suffix}`);
+            animationFrameId = requestAnimationFrame(animate);
           } else {
-            // When leaving the viewport, kill the animation so it's ready to restart
-            if (animation) {
-              animation.kill();
+            if (animationFrameId) {
+              cancelAnimationFrame(animationFrameId);
+              animationFrameId = null;
             }
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" } // Triggers slightly before it fully comes into view
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
-    
-    observer.observe(domRef.current);
-    
+
+    observer.observe(currentRef);
+
     return () => {
-      if (domRef.current) observer.unobserve(domRef.current);
-      gsap.killTweensOf(targetObj);
+      observer.unobserve(currentRef);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, [text]);
 
-  // Initially render the text as 0 (but with prefixes) to prevent layout shift before hydration
-  const initialMatch = text.replace(/,/g, "").match(/(.*?)(\d+(?:\.\d+)?)(.*)/);
-  let initialText = text;
-  if (initialMatch) {
-    const isFloat = initialMatch[2].includes(".");
-    initialText = `${initialMatch[1]}${isFloat ? "0." + "0".repeat(initialMatch[2].split(".")[1].length) : "0"}${initialMatch[3]}`;
-  }
-
-  return <span ref={domRef}>{initialText}</span>;
+  return <span ref={domRef}>{displayValue}</span>;
 }

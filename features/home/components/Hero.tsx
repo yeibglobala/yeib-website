@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 export function Hero({ isActive = true }: { isActive?: boolean }) {
   // If we're using framer-motion and this is inside a carousel (if isActive is used that way),

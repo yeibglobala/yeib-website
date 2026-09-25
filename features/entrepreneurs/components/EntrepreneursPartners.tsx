@@ -31,6 +31,7 @@ export function EntrepreneursPartners() {
                       alt={partner.alt} 
                       width={partner.width} 
                       height={40} 
+                      style={{ width: "auto" }}
                       className="h-8 md:h-10 w-auto object-contain"
                     />
                   </div>

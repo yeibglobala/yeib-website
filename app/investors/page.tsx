@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { InvestorsHero } from "@/features/investors/components/InvestorsHero";
 import { TwoSidedModel } from "@/features/investors/components/TwoSidedModel";
 import { FundStructure } from "@/features/investors/components/FundStructure";
@@ -5,6 +6,11 @@ import { FirstLossGuarantee } from "@/features/investors/components/FirstLossGua
 import { Roadmap } from "@/features/investors/components/Roadmap";
 import { InstitutionalPartners } from "@/features/investors/components/InstitutionalPartners";
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
+
+export const metadata: Metadata = {
+  title: "Partners & Investors | N-YEIB",
+  description: "Co-invest with AfDB, sovereign funds, and institutional partners deploying patient capital and catalytic first-loss guarantees.",
+};
 
 export default function InvestorsPage() {
   return (

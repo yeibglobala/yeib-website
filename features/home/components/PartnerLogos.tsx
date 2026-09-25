@@ -23,6 +23,7 @@ export function PartnerLogos() {
                   alt={partner.alt} 
                   width={partner.width} 
                   height={40} 
+                  style={{ width: "auto" }}
                   className="h-8 md:h-10 w-auto object-contain hover:scale-105 transition-transform duration-300"
                 />
               </div>

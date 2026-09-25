@@ -1,6 +1,5 @@
 "use client";
 
-import { FadeIn } from "@/components/ui/FadeIn";
 import { motion } from "framer-motion";
 
 export function RiskBanksWont() {

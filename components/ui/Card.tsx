@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { CountUp } from "@/components/ui/CountUp";
+import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -97,8 +98,8 @@ const CardStatBlock = React.forwardRef<HTMLDivElement, CardStatBlockProps>(
       {label && <div className="text-sm font-semibold opacity-90">{label}</div>}
       {children}
       {source && (
-        <div className="mt-6 pt-4 border-t border-[var(--color-pale-oak)]/20 text-xs font-semibold flex items-center text-[var(--color-mint-leaf)]">
-          <span className="mr-2">●</span> Verified · {source}
+        <div className="mt-6 pt-4 border-t border-[var(--color-pale-oak)]/20 text-xs font-semibold flex items-center">
+          <VerifiedBadge source={source} />
         </div>
       )}
     </div>

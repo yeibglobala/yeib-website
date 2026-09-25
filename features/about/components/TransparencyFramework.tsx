@@ -1,5 +1,4 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { Tag } from "@/components/ui/Tag";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -57,6 +56,7 @@ export function TransparencyFramework() {
                     alt={partner.alt} 
                     width={partner.width} 
                     height={40} 
+                    style={{ width: "auto" }}
                     className="h-8 md:h-12 w-auto object-contain mix-blend-multiply filter grayscale hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
