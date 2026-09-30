@@ -28,6 +28,7 @@ export interface ProcessFormSubmissionOptions {
   subject: string;
   templateData: EmailTemplateData;
   confirmationIntro: string;
+  referenceNumber?: string;
   audienceData?: {
     firstName?: string;
     lastName?: string;
@@ -39,6 +40,7 @@ export interface FormSubmissionResult {
   message: string;
   backupSaved: boolean;
   emailSent: boolean;
+  referenceNumber?: string;
 }
 
 export async function processFormSubmission(
@@ -51,7 +53,10 @@ export async function processFormSubmission(
   const payload: SubmissionPayload = {
     formType: options.formType,
     submittedAt: timestamp,
-    data: rawFormData,
+    data: {
+      ...rawFormData,
+      ...(options.referenceNumber ? { referenceNumber: options.referenceNumber } : {}),
+    },
   };
   await logSubmissionLocally(payload);
 
@@ -67,7 +72,9 @@ export async function processFormSubmission(
         from: EMAIL_CONFIG.from,
         to: toEmail,
         replyTo: options.senderEmail,
-        subject: options.subject,
+        subject: options.referenceNumber
+          ? `[${options.referenceNumber}] ${options.subject}`
+          : options.subject,
         html: buildInternalEmailHtml(options.templateData),
         text: buildInternalEmailText(options.templateData),
       });
@@ -79,15 +86,19 @@ export async function processFormSubmission(
           await resend.emails.send({
             from: EMAIL_CONFIG.from,
             to: options.senderEmail,
-            subject: `Receipt: ${options.subject}`,
+            subject: options.referenceNumber
+              ? `Receipt [${options.referenceNumber}]: ${options.subject}`
+              : `Receipt: ${options.subject}`,
             html: buildConfirmationEmailHtml(
               options.senderName || "Valued Partner",
               options.subject,
-              options.confirmationIntro
+              options.confirmationIntro,
+              options.referenceNumber
             ),
             text: buildConfirmationEmailText(
               options.senderName || "Valued Partner",
-              options.confirmationIntro
+              options.confirmationIntro,
+              options.referenceNumber
             ),
           });
         } catch (confError) {
@@ -122,5 +133,6 @@ export async function processFormSubmission(
     message: "Your submission has been successfully received!",
     backupSaved: true,
     emailSent,
+    referenceNumber: options.referenceNumber,
   };
 }

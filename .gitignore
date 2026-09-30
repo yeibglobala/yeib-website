@@ -26,7 +26,7 @@ __MACOSX/
 *.pem
 .idea/
 .vscode/
-data/
+/data/
 
 # debug
 npm-debug.log*

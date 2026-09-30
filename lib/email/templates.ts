@@ -111,7 +111,28 @@ export function buildInternalEmailText(data: EmailTemplateData): string {
   return `[${data.badge.toUpperCase()}] ${data.title}\n\nFrom: ${data.senderName} (${data.senderEmail})\n\nDetails:\n${details}${msg}\n\n--\nYEIB Nigeria Investment Management Company Ltd.`;
 }
 
-export function buildConfirmationEmailHtml(recipientName: string, subjectTitle: string, introText: string): string {
+export function buildConfirmationEmailHtml(
+  recipientName: string,
+  subjectTitle: string,
+  introText: string,
+  referenceNumber?: string
+): string {
+  const referenceBadge = referenceNumber
+    ? `
+      <div style="background-color: #003124; color: #FFFFFF; padding: 16px 20px; border-radius: 8px; margin: 24px 0; text-align: center;">
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #00BE93; font-weight: 700; display: block; margin-bottom: 6px;">
+          Application Reference Code
+        </span>
+        <span style="font-size: 20px; font-weight: 700; font-family: 'Courier New', monospace; letter-spacing: 2px; color: #FFFFFF;">
+          ${escapeHtml(referenceNumber)}
+        </span>
+        <p style="margin: 6px 0 0 0; font-size: 11px; color: #E1C9B3;">
+          Please quote this reference in any correspondence with the Fund.
+        </p>
+      </div>
+    `
+    : "";
+
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -129,7 +150,7 @@ export function buildConfirmationEmailHtml(recipientName: string, subjectTitle: 
           <tr>
             <td style="background-color: #003124; padding: 28px 32px; text-align: left;">
               <h1 style="color: #00BE93; font-size: 20px; margin: 0 0 6px 0; font-weight: 700;">
-                N-YEIB Investment Funds
+                Nigeria YEIB Investment Funds
               </h1>
               <p style="color: #E1C9B3; margin: 0; font-size: 13px;">
                 The institutional bridge between capital and ambition
@@ -148,17 +169,25 @@ export function buildConfirmationEmailHtml(recipientName: string, subjectTitle: 
                 ${escapeHtml(introText)}
               </p>
 
+              ${referenceBadge}
+
               <div style="background-color: #F2FBF6; border-left: 4px solid #00BE93; padding: 16px; margin: 24px 0; border-radius: 4px;">
                 <p style="margin: 0; font-size: 14px; color: #003124; font-weight: 600;">
                   What happens next?
                 </p>
                 <p style="margin: 8px 0 0 0; font-size: 13px; color: #444444; line-height: 1.5;">
-                  Our evaluation team will review your submission in detail. You can expect a response or follow-up from our team within 2 to 3 business days.
+                  We review submissions on a rolling basis and aim to respond within 5 to 10 working days. If your submission proceeds past initial screening, we will contact you to request further information and documentation.
+                </p>
+              </div>
+
+              <div style="background-color: #FFF9F2; border-left: 4px solid #F88404; padding: 14px 16px; margin-bottom: 24px; border-radius: 4px;">
+                <p style="margin: 0; font-size: 12px; color: #8C4400; line-height: 1.5;">
+                  <strong>Important Notice:</strong> Nigeria YEIB Investment Funds never charges a fee to apply and does not work through agents or intermediaries who charge for access. If anyone asks you for payment in our name, please report it immediately to <strong>fraud-report@yeib-manco.com.ng</strong>.
                 </p>
               </div>
 
               <p style="font-size: 14px; color: #555555; line-height: 1.5; margin-bottom: 0;">
-                If you have additional files or urgent questions, you can reply directly to this email.
+                If you have additional files or urgent questions, you can reply directly to this notification.
               </p>
             </td>
           </tr>
@@ -181,8 +210,13 @@ export function buildConfirmationEmailHtml(recipientName: string, subjectTitle: 
   `.trim();
 }
 
-export function buildConfirmationEmailText(recipientName: string, introText: string): string {
-  return `Hello ${recipientName},\n\n${introText}\n\nWhat happens next?\nOur evaluation team will review your submission in detail. You can expect a response from our team within 2 to 3 business days.\n\n--\nN-YEIB Investment Funds\nAnchored by AfDB\nAbuja, Nigeria`;
+export function buildConfirmationEmailText(
+  recipientName: string,
+  introText: string,
+  referenceNumber?: string
+): string {
+  const refText = referenceNumber ? `\nApplication Reference Code: ${referenceNumber}\n` : "";
+  return `Hello ${recipientName},\n\n${introText}\n${refText}\nWhat happens next?\nWe review submissions on a rolling basis and aim to respond within 5 to 10 working days. If your submission proceeds, we will contact you to request further documentation.\n\nImportant Notice:\nNigeria YEIB Investment Funds never charges a fee to apply and does not work through agents who charge for access. Report any payment solicitation to fraud-report@yeib-manco.com.ng.\n\n--\nNigeria YEIB Investment Funds\nAnchored by AfDB\nAbuja, Nigeria`;
 }
 
 function escapeHtml(text: string): string {

@@ -105,18 +105,108 @@ export async function submitPartnershipAction(data: {
   );
 }
 
-// 3. Application Intake Action (/apply)
-export async function submitApplicationAction(data: {
+// 3. Application Intake Action (/apply) - Supporting all 6 Stakeholder Groups
+export interface StakeholderApplicationPayload {
+  formNumber: 1 | 2 | 3 | 4 | 5 | 6;
+  formTitle: string;
+  contact: {
+    fullName: string;
+    organizationName: string;
+    role: string;
+    email: string;
+    phone: string;
+    state: string;
+    websiteOrLinkedIn?: string;
+    referralSource?: string;
+  };
+  responses: Record<string, string | string[]>;
+  declarations: {
+    accuracyConfirmed: boolean;
+    nonBindingAcknowledged: boolean;
+    privacyConsent: boolean;
+    exclusionListConfirmed?: boolean;
+    shareWithPartnersConsent?: boolean;
+    receiveUpdatesConsent?: boolean;
+  };
+  honeypot?: string;
+}
+
+export interface LegacyApplicationPayload {
   track: "founder" | "manager" | "eso";
   contactEmail: string;
   contactPhone: string;
   trackFields: Record<string, string>;
   honeypot?: string;
-}): Promise<FormSubmissionResult> {
+}
+
+export type ApplicationInput = StakeholderApplicationPayload | LegacyApplicationPayload;
+
+export async function submitApplicationAction(data: ApplicationInput): Promise<FormSubmissionResult> {
   if (data.honeypot) {
-    return { success: true, message: "Application received.", backupSaved: false, emailSent: false };
+    return { success: true, message: "Application received.", backupSaved: false, emailSent: false, referenceNumber: "YEIB-0-2026-0000" };
   }
 
+  // Handle New 6-Stakeholder schema
+  if ("formNumber" in data) {
+    const year = new Date().getFullYear();
+    const sequence = Math.floor(1000 + Math.random() * 9000);
+    const referenceNumber = `YEIB-${data.formNumber}-${year}-${sequence}`;
+
+    const detailsList: { label: string; value: string }[] = [
+      { label: "Reference Number", value: referenceNumber },
+      { label: "Stakeholder Category", value: `Form ${data.formNumber}: ${data.formTitle}` },
+      { label: "Full Name", value: data.contact.fullName },
+      { label: "Organisation / Business", value: data.contact.organizationName },
+      { label: "Role / Title", value: data.contact.role },
+      { label: "Email Address", value: data.contact.email },
+      { label: "Phone Number", value: data.contact.phone },
+      { label: "Headquarters State", value: data.contact.state },
+      ...(data.contact.websiteOrLinkedIn ? [{ label: "Website / LinkedIn", value: data.contact.websiteOrLinkedIn }] : []),
+      ...(data.contact.referralSource ? [{ label: "Referral Source", value: data.contact.referralSource }] : []),
+      ...Object.entries(data.responses).map(([question, answer]) => ({
+        label: question,
+        value: Array.isArray(answer) ? answer.join("; ") : String(answer),
+      })),
+      { label: "NDPA 2023 Consent", value: data.declarations.privacyConsent ? "Agreed" : "No" },
+      { label: "Accuracy Confirmed", value: data.declarations.accuracyConfirmed ? "Agreed" : "No" },
+      { label: "Non-Binding Terms", value: data.declarations.nonBindingAcknowledged ? "Agreed" : "No" },
+      ...(data.declarations.exclusionListConfirmed !== undefined
+        ? [{ label: "Exclusion List Confirmation", value: data.declarations.exclusionListConfirmed ? "Confirmed Not Engaged" : "No" }]
+        : []),
+      { label: "Consent to Share with Partners (ICGL/ESOs)", value: data.declarations.shareWithPartnersConsent ? "Agreed" : "Declined" },
+      { label: "Consent for Updates", value: data.declarations.receiveUpdatesConsent ? "Subscribed" : "Declined" },
+    ];
+
+    const result = await processFormSubmission(
+      {
+        formType: "application",
+        recipientTo: EMAIL_CONFIG.applyTo,
+        senderName: data.contact.fullName,
+        senderEmail: data.contact.email,
+        subject: `[YEIB Form ${data.formNumber}] ${data.formTitle} - ${data.contact.organizationName}`,
+        referenceNumber,
+        confirmationIntro: `Thank you. We have received your submission under Form ${data.formNumber} (${data.formTitle}).`,
+        audienceData: {
+          firstName: data.contact.fullName,
+        },
+        templateData: {
+          title: `New Form ${data.formNumber} Submission: ${data.formTitle}`,
+          badge: `YEIB Intake [Form ${data.formNumber}]`,
+          senderName: data.contact.fullName,
+          senderEmail: data.contact.email,
+          details: detailsList,
+        },
+      },
+      data as unknown as Record<string, unknown>
+    );
+
+    return {
+      ...result,
+      referenceNumber,
+    };
+  }
+
+  // Legacy fallback
   const trackLabels = {
     founder: "Youth & Women MSME Founder",
     manager: "Fund Manager / Intermediary",
@@ -130,7 +220,12 @@ export async function submitApplicationAction(data: {
     data.trackFields["Contact Person"] ||
     "Applicant";
 
+  const year = new Date().getFullYear();
+  const sequence = Math.floor(1000 + Math.random() * 9000);
+  const referenceNumber = `YEIB-LEGACY-${year}-${sequence}`;
+
   const detailsList = [
+    { label: "Reference Number", value: referenceNumber },
     { label: "Application Track", value: trackTitle },
     { label: "Contact Email", value: data.contactEmail },
     { label: "Phone Number", value: data.contactPhone },
@@ -140,12 +235,13 @@ export async function submitApplicationAction(data: {
     })),
   ];
 
-  return await processFormSubmission(
+  const result = await processFormSubmission(
     {
       formType: "application",
       recipientTo: EMAIL_CONFIG.applyTo,
       senderName: applicantName,
       senderEmail: data.contactEmail,
+      referenceNumber,
       subject: `[YEIB Application] ${trackTitle} - ${applicantName}`,
       confirmationIntro: `Thank you for submitting your ${trackTitle} application to N-YEIB. Your details have been registered into our pipeline evaluation queue.`,
       audienceData: {
@@ -159,8 +255,13 @@ export async function submitApplicationAction(data: {
         details: detailsList,
       },
     },
-    data
+    data as unknown as Record<string, unknown>
   );
+
+  return {
+    ...result,
+    referenceNumber,
+  };
 }
 
 // 4. ESG Grievance Action (/esg)

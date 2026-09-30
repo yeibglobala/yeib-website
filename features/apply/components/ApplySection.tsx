@@ -3,496 +3,1197 @@
 import { useState } from "react";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, ArrowRight, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+  Loader2,
+  AlertCircle,
+  Copy,
+  Check,
+  Building2,
+  TrendingUp,
+  Landmark,
+  GraduationCap,
+  FileSpreadsheet,
+  Globe2,
+  ShieldCheck,
+  Info,
+  X,
+  FileCheck,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { submitApplicationAction } from "@/lib/email/actions";
-
-type ApplicantType = "founder" | "manager" | "eso";
-type ViewState = "lead" | "form";
+import {
+  STAKEHOLDER_GROUPS,
+  NIGERIAN_STATES,
+  StakeholderGroup,
+} from "../data/stakeholderForms";
+import { FORMS_BY_NUMBER, FormQuestion } from "../data/formQuestions";
 
 export function ApplySection() {
-  const [activeTab, setActiveTab] = useState<ApplicantType>("founder");
-  const [view, setView] = useState<ViewState>("lead");
+  const router = useRouter();
+  const [step, setStep] = useState<number>(0);
+  const [selectedGroup, setSelectedGroup] = useState<StakeholderGroup | null>(null);
+
+  // Section A - Contact Details
+  const [contact, setContact] = useState({
+    fullName: "",
+    organizationName: "",
+    role: "",
+    email: "",
+    phone: "",
+    state: "",
+    websiteOrLinkedIn: "",
+    referralSource: "",
+  });
+
+  // Section B - Responses
+  const [responses, setResponses] = useState<Record<string, string | string[]>>({});
+  // Special dual currency state for Form 2 Q2.6
+  const [currencyForm2, setCurrencyForm2] = useState<"₦" | "US$">("₦");
+  const [targetSizeForm2, setTargetSizeForm2] = useState("");
+  const [committedForm2, setCommittedForm2] = useState("");
+
+  // Special two-selects for Form 4 Q4.7
+  const [youthLedShare, setYouthLedShare] = useState("");
+  const [womenLedShare, setWomenLedShare] = useState("");
+
+  // Section C - Declarations
+  const [declarations, setDeclarations] = useState({
+    accuracyConfirmed: false,
+    nonBindingAcknowledged: false,
+    privacyConsent: false,
+    exclusionListConfirmed: false,
+    shareWithPartnersConsent: false,
+    receiveUpdatesConsent: false,
+  });
+
+  // Flow State
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [copiedRef, setCopiedRef] = useState(false);
 
-  const tabData = {
-    founder: {
-      label: "Entrepreneurs",
-      tag: "For Entrepreneurs",
-      title: "Apply for Funding.",
-      desc: "We are looking for ambitious youth- and women-led MSMEs ready to scale. Review our process and ensure you meet the criteria before applying.",
-      process: [
-        { step: "01", title: "Check Eligibility", description: "Ensure your business meets the core criteria for YEIB funding, focusing on youth and women-led enterprises." },
-        { step: "02", title: "Submit Intake Form", description: "Provide basic information about your business, sector, and capital requirements." },
-        { step: "03", title: "Initial Evaluation", description: "Our team reviews your submission to determine the best funding mechanism." },
-        { step: "04", title: "Due Diligence", description: "Shortlisted candidates will undergo a comprehensive financial and operational review." }
-      ],
-      eligibility: [
-        "Under age 35 (or management team ≥50% under 35)",
-        "Registered business operating in Nigeria",
-        "Clear revenue generation model",
-        "Priority given to Agriculture, Trade, Creative, and ICT sectors"
-      ]
-    },
-    manager: {
-      label: "Fund Managers",
-      tag: "For Intermediaries",
-      title: "Partner with Us.",
-      desc: "We co-invest with established PE/VC firms and asset managers to amplify capital deployment to Nigerian MSMEs.",
-      process: [
-        { step: "01", title: "Portfolio Review", description: "Ensure your fund's investment mandate aligns with the YEIB focus sectors and demographic targets." },
-        { step: "02", title: "Submit Application", description: "Provide your fund track record, AUM, and strategic mandate details." },
-        { step: "03", title: "Institutional Assessment", description: "We evaluate your fund strategy, ESG compliance framework, and existing pipeline." },
-        { step: "04", title: "Co-Investment Structuring", description: "Finalize capital commitment and deployment schedules." }
-      ],
-      eligibility: [
-        "Registered asset management or PE/VC firm",
-        "Proven track record of investing in MSMEs in Nigeria",
-        "Aligned ESG and impact mandates",
-        "Robust risk management framework"
-      ]
-    },
-    eso: {
-      label: "ESOs",
-      tag: "For Ecosystem Partners",
-      title: "Drive Ecosystem Capacity.",
-      desc: "We support Enterprise Support Organizations (incubators, accelerators) to build a stronger pipeline of investment-ready businesses.",
-      process: [
-        { step: "01", title: "Capacity Assessment", description: "Review your existing incubator, accelerator, or capacity-building programs." },
-        { step: "02", title: "Submit Proposal", description: "Detail your proposed curriculum, target demographic, and expected ecosystem impact." },
-        { step: "03", title: "Partnership Evaluation", description: "Assessment of your operational reach, past success metrics, and infrastructure." },
-        { step: "04", title: "Deployment", description: "Mobilization of grant/support funding for program execution." }
-      ],
-      eligibility: [
-        "Proven experience running incubation or acceleration programs",
-        "Existing network of early-stage startups/MSMEs",
-        "Measurable past impact metrics",
-        "Clear methodology for technical capacity building"
-      ]
+  // Modals for NDPA Privacy & Exclusion List
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showExclusionModal, setShowExclusionModal] = useState(false);
+
+  // Helpers
+  const countWords = (text: string) => {
+    return text.trim() ? text.trim().split(/\s+/).length : 0;
+  };
+
+  const handleCopyReference = () => {
+    if (referenceNumber) {
+      navigator.clipboard.writeText(referenceNumber);
+      setCopiedRef(true);
+      setTimeout(() => setCopiedRef(false), 2500);
     }
   };
 
-  const currentData = tabData[activeTab];
+  // Group selection
+  const handleSelectGroup = (group: StakeholderGroup) => {
+    setSelectedGroup(group);
+    setResponses({});
+    setStep(1); // Move to Section A
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Validation before advancing to Section B
+  const canProceedFromSectionA = () => {
+    return (
+      contact.fullName.trim() !== "" &&
+      contact.organizationName.trim() !== "" &&
+      contact.role.trim() !== "" &&
+      contact.email.trim().includes("@") &&
+      contact.phone.trim().length >= 7 &&
+      contact.state.trim() !== ""
+    );
+  };
+
+  // Check whether Form 1 includes equity or quasi-equity (triggers Q1.10, Q1.11, and C.4)
+  const isForm1Equity = () => {
+    if (selectedGroup?.formNumber !== 1) return false;
+    const support = responses["1.9"];
+    if (!support) return false;
+    const arr = Array.isArray(support) ? support : [support];
+    return (
+      arr.includes("Equity investment") ||
+      arr.includes("Quasi-equity (for example, revenue-based or convertible finance)")
+    );
+  };
+
+  // Validation before advancing to Section C
+  const canProceedFromSectionB = () => {
+    if (!selectedGroup) return false;
+    const questions = FORMS_BY_NUMBER[selectedGroup.formNumber] || [];
+
+    for (const q of questions) {
+      if (q.condition && !q.condition(responses)) {
+        continue;
+      }
+      if (!q.required) continue;
+
+      if (q.type === "currency-dual") {
+        if (!targetSizeForm2.trim() || !committedForm2.trim()) return false;
+        continue;
+      }
+
+      if (q.type === "two-selects") {
+        if (!youthLedShare || !womenLedShare) return false;
+        continue;
+      }
+
+      const val = responses[q.id];
+      if (!val || (Array.isArray(val) && val.length === 0) || String(val).trim() === "") {
+        return false;
+      }
+
+      if (q.maxWords && countWords(String(val)) > q.maxWords) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Final submission
+  const handleSubmitFinal = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!selectedGroup) return;
+
+    if (!declarations.accuracyConfirmed || !declarations.nonBindingAcknowledged || !declarations.privacyConsent) {
+      setErrorMessage("Please accept all mandatory legal declarations to proceed.");
+      return;
+    }
+
+    if (isForm1Equity() && !declarations.exclusionListConfirmed) {
+      setErrorMessage("Confirmation of compliance with the YEIB Exclusion List is required for equity applications.");
+      return;
+    }
+
+    setStatus("submitting");
+    setErrorMessage("");
+
+    const consolidatedResponses: Record<string, string | string[]> = { ...responses };
+
+    // Format Form 2 Q2.6
+    if (selectedGroup.formNumber === 2) {
+      consolidatedResponses["2.6 Target fund size and capital committed to date"] =
+        `Target: ${currencyForm2}${targetSizeForm2} | Committed: ${currencyForm2}${committedForm2}`;
+    }
+
+    // Format Form 4 Q4.7
+    if (selectedGroup.formNumber === 4) {
+      consolidatedResponses["4.7 Share of youth-led and women-led businesses"] =
+        `Youth-led: ${youthLedShare} | Women-led: ${womenLedShare}`;
+    }
+
+    try {
+      const res = await submitApplicationAction({
+        formNumber: selectedGroup.formNumber,
+        formTitle: selectedGroup.name,
+        contact,
+        responses: consolidatedResponses,
+        declarations,
+      });
+
+      if (res.success) {
+        setReferenceNumber(res.referenceNumber || "YEIB-CONFIRMED");
+        setStatus("success");
+        setStep(4);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setStatus("error");
+        setErrorMessage(res.message || "Failed to submit application. Please check fields and try again.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMessage("A network or transmission error occurred. Please try submitting again.");
+    }
+  };
+
+  // Group icons
+  const getGroupIcon = (formNum: number) => {
+    switch (formNum) {
+      case 1:
+        return <TrendingUp className="w-6 h-6 text-[var(--color-tiger-orange)]" />;
+      case 2:
+        return <Building2 className="w-6 h-6 text-[var(--color-emerald)]" />;
+      case 3:
+        return <Landmark className="w-6 h-6 text-[var(--color-tiger-orange)]" />;
+      case 4:
+        return <GraduationCap className="w-6 h-6 text-[var(--color-emerald)]" />;
+      case 5:
+        return <FileSpreadsheet className="w-6 h-6 text-[var(--color-tiger-orange)]" />;
+      case 6:
+        return <Globe2 className="w-6 h-6 text-[var(--color-emerald)]" />;
+      default:
+        return <Building2 className="w-6 h-6" />;
+    }
+  };
 
   return (
-    <section className="bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] min-h-screen pt-32 pb-24 overflow-hidden">
-      <AnimatePresence mode="wait">
-        {view === "form" ? (
-          <motion.div 
-            key="form-view"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="container mx-auto px-4 max-w-3xl"
-          >
-            <button 
-              onClick={() => setView("lead")}
-              className="flex items-center gap-2 text-[var(--color-evergreen)]/70 hover:text-[var(--color-tiger-orange)] font-bold text-sm mb-8 transition-colors group"
-            >
-              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Overview
-            </button>
-            
-            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-[var(--color-evergreen)]/5">
-              <div className="mb-10 text-center">
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="inline-block px-4 py-1.5 rounded-full bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] text-xs font-bold tracking-widest capitalize mb-4"
-                >
-                  {currentData.label} Application
-                </motion.div>
-                <h2 className="font-[var(--font-asul)] text-3xl md:text-4xl font-bold mb-4">Intake Form</h2>
-                <p className="text-[var(--color-evergreen)]/70 font-medium">
-                  Please provide accurate details so we can route your application to the correct evaluation track.
+    <section className="bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] min-h-screen pt-32 pb-24 overflow-hidden relative">
+      {/* Background blur highlight */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-[var(--color-tiger-orange)]/5 rounded-bl-full -z-10 blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto px-4 max-w-5xl">
+        {/* Step Indicator Header (Steps 1 to 3) */}
+        {step >= 1 && step <= 3 && selectedGroup && (
+          <div className="mb-10">
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep((prev) => Math.max(0, prev - 1));
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/70 hover:text-[var(--color-tiger-orange)] transition-colors group"
+              >
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                <span>Back</span>
+              </button>
+
+              <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[var(--color-tiger-orange)]">
+                <span>Form {selectedGroup.formNumber}</span>
+                <span className="text-[var(--color-evergreen)]/30">•</span>
+                <span className="text-[var(--color-evergreen)]/70">{selectedGroup.name}</span>
+              </div>
+            </div>
+
+            {/* Stepper Progress Bar */}
+            <div className="grid grid-cols-3 gap-2">
+              <div
+                className={`h-1.5 transition-all duration-300 ${
+                  step >= 1 ? "bg-[var(--color-evergreen)]" : "bg-[var(--color-evergreen)]/15"
+                }`}
+              />
+              <div
+                className={`h-1.5 transition-all duration-300 ${
+                  step >= 2 ? "bg-[var(--color-evergreen)]" : "bg-[var(--color-evergreen)]/15"
+                }`}
+              />
+              <div
+                className={`h-1.5 transition-all duration-300 ${
+                  step >= 3 ? "bg-[var(--color-evergreen)]" : "bg-[var(--color-evergreen)]/15"
+                }`}
+              />
+            </div>
+            <div className="flex justify-between text-[11px] font-semibold tracking-wider uppercase text-[var(--color-evergreen)]/60 mt-2">
+              <span className={step === 1 ? "text-[var(--color-evergreen)] font-bold" : ""}>
+                1. Contact Details
+              </span>
+              <span className={step === 2 ? "text-[var(--color-evergreen)] font-bold" : ""}>
+                2. Screening Questions
+              </span>
+              <span className={step === 3 ? "text-[var(--color-evergreen)] font-bold" : ""}>
+                3. Declarations & Consent
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* ---------------- STEP 0: STAKEHOLDER SELECTOR ---------------- */}
+        {step === 0 && (
+          <FadeIn direction="up">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="inline-block px-4 py-1.5 rounded-full border border-[var(--color-tiger-orange)] text-[var(--color-tiger-orange)] text-xs font-bold tracking-widest uppercase mb-4">
+                Stakeholder Intake Portal
+              </span>
+              <h1 className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[var(--color-evergreen)] mb-6">
+                Work with Nigeria YEIB Investment Funds
+              </h1>
+              <p className="text-base sm:text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-normal">
+                Nigeria YEIB Investment Funds provides patient capital, risk-sharing and capacity-building
+                support to growth-oriented, youth-led businesses across the 36 states and the Federal Capital
+                Territory. We work directly with entrepreneurs and through fund managers, lenders and ecosystem
+                organisations that share our focus on job creation.
+              </p>
+              <div className="mt-6 p-4 rounded-xl bg-white/70 border border-[var(--color-evergreen)]/10 text-xs sm:text-sm text-[var(--color-evergreen)]/80 max-w-2xl mx-auto flex items-center justify-center gap-3">
+                <ShieldCheck className="w-5 h-5 text-[var(--color-emerald)] shrink-0" />
+                <span>
+                  <strong>No fee to apply:</strong> It takes about five minutes. We never work through intermediaries who charge for access.
+                </span>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--color-evergreen)]/60 text-center mb-6">
+                Select the option that best describes you to proceed to the relevant form:
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {STAKEHOLDER_GROUPS.map((group) => (
+                  <motion.div
+                    key={group.id}
+                    whileHover={{ y: -4, borderColor: "var(--color-tiger-orange)" }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-white rounded-2xl p-7 border border-[var(--color-evergreen)]/10 shadow-[0_10px_30px_-10px_rgba(0,49,36,0.05)] flex flex-col justify-between cursor-pointer group"
+                    onClick={() => handleSelectGroup(group)}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-5">
+                        <div className="w-12 h-12 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          {getGroupIcon(group.formNumber)}
+                        </div>
+                        <span className="text-[11px] font-bold tracking-widest uppercase text-[var(--color-evergreen)]/40 group-hover:text-[var(--color-tiger-orange)] transition-colors">
+                          Form 0{group.formNumber}
+                        </span>
+                      </div>
+
+                      <h3 className="font-[var(--font-asul)] text-xl font-bold text-[var(--color-evergreen)] mb-3 leading-snug">
+                        {group.name}
+                      </h3>
+                      <p className="text-xs text-[var(--color-evergreen)]/70 leading-relaxed mb-6 font-normal">
+                        {group.tagline}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-[var(--color-evergreen)]/10 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)] group-hover:text-[var(--color-tiger-orange)] transition-colors">
+                      <span>Start Application</span>
+                      <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* ---------------- STEP 1: SECTION A (CONTACT DETAILS) ---------------- */}
+        {step === 1 && selectedGroup && (
+          <FadeIn direction="up">
+            <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10">
+              <div className="mb-8 pb-6 border-b border-[var(--color-evergreen)]/10">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-1">
+                  Section A • Common Intake
+                </span>
+                <h2 className="font-[var(--font-asul)] text-3xl font-bold text-[var(--color-evergreen)]">
+                  Contact & Organisation Details
+                </h2>
+                <p className="text-xs sm:text-sm text-[var(--color-evergreen)]/70 mt-1">
+                  This information allows the YEIB screening team to authenticate and route your submission.
                 </p>
               </div>
-              
-              {status === "success" ? (
-                <div className="py-12 flex flex-col items-center text-center">
-                  <div className="w-20 h-20 bg-[var(--color-mint-cream)] text-[var(--color-mint-leaf)] rounded-full flex items-center justify-center mb-6 border border-[var(--color-mint-leaf)]/30">
-                    <CheckCircle2 size={44} />
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.1 Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={contact.fullName}
+                      onChange={(e) => setContact({ ...contact, fullName: e.target.value })}
+                      placeholder="e.g. Amina Mohammed"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      required
+                    />
                   </div>
-                  <h3 className="font-[var(--font-asul)] text-2xl md:text-3xl font-bold text-[var(--color-evergreen)] mb-3">
-                    Application Submitted Successfully
-                  </h3>
-                  <p className="text-[var(--color-evergreen)]/70 max-w-md mx-auto mb-8 leading-relaxed">
-                    Your {currentData.label} application has been received and logged into our evaluation pipeline. A confirmation email has been dispatched with next steps.
-                  </p>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.2 Name of Business or Organisation *
+                    </label>
+                    <input
+                      type="text"
+                      value={contact.organizationName}
+                      onChange={(e) => setContact({ ...contact, organizationName: e.target.value })}
+                      placeholder="e.g. Sahel Ventures Ltd."
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.3 Your Role or Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={contact.role}
+                      onChange={(e) => setContact({ ...contact, role: e.target.value })}
+                      placeholder="e.g. Managing Director / Founder"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.4 Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      value={contact.email}
+                      onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                      placeholder="contact@organisation.com"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.5 Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      value={contact.phone}
+                      onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+                      placeholder="+234 800 000 0000"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      required
+                    />
+                    <span className="text-[11px] text-[var(--color-evergreen)]/60 mt-1 block">
+                      Include the country code, for example +234.
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.6 Headquartered State *
+                    </label>
+                    <select
+                      value={contact.state}
+                      onChange={(e) => setContact({ ...contact, state: e.target.value })}
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      required
+                    >
+                      <option value="">Select state or jurisdiction...</option>
+                      {NIGERIAN_STATES.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.7 Website or LinkedIn Page (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      value={contact.websiteOrLinkedIn}
+                      onChange={(e) => setContact({ ...contact, websiteOrLinkedIn: e.target.value })}
+                      placeholder="https://..."
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/80 mb-2">
+                      A.8 How Did You Hear About Us? (Optional)
+                    </label>
+                    <select
+                      value={contact.referralSource}
+                      onChange={(e) => setContact({ ...contact, referralSource: e.target.value })}
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                    >
+                      <option value="">Select channel...</option>
+                      <option value="Referral">Referral</option>
+                      <option value="Event or conference">Event or conference</option>
+                      <option value="Social media">Social media</option>
+                      <option value="News or press">News or press</option>
+                      <option value="Partner organisation">Partner organisation</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-[var(--color-evergreen)]/10 flex justify-end">
                   <Button
+                    type="button"
+                    disabled={!canProceedFromSectionA()}
                     onClick={() => {
-                      setStatus("idle");
-                      setView("lead");
+                      setStep(2);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="bg-[var(--color-evergreen)] text-white hover:bg-[var(--color-evergreen)]/90"
+                    className="bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2 disabled:opacity-40"
                   >
-                    Done & Return to Overview
+                    <span>Proceed to Questionnaire</span>
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
-              ) : (
-                <form className="flex flex-col gap-8" onSubmit={async (e) => {
-                  e.preventDefault();
-                  setStatus("submitting");
-                  setErrorMessage("");
+              </div>
+            </div>
+          </FadeIn>
+        )}
 
-                  const formData = new FormData(e.currentTarget);
-                  const honeypot = (formData.get("honeypot") as string) || "";
-                  const contactEmail = (formData.get("contactEmail") as string) || "";
-                  const contactPhone = (formData.get("contactPhone") as string) || "";
+        {/* ---------------- STEP 2: SECTION B (FORM QUESTIONS) ---------------- */}
+        {step === 2 && selectedGroup && (
+          <FadeIn direction="up">
+            <div className="space-y-8">
+              {/* Stakeholder Policy Banner */}
+              <div className="bg-[var(--color-evergreen)] text-white rounded-2xl p-8 shadow-lg relative overflow-hidden">
+                <div className="relative z-10">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-emerald)] block mb-2">
+                    Form 0{selectedGroup.formNumber} • {selectedGroup.name}
+                  </span>
+                  <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-normal">
+                    {selectedGroup.introCopy}
+                  </p>
+                </div>
+              </div>
 
-                  let trackFields: Record<string, string> = {};
-
-                  if (activeTab === "founder") {
-                    trackFields = {
-                      "Full Name": (formData.get("founderFullName") as string) || "",
-                      "Age": (formData.get("founderAge") as string) || "",
-                      "Business Name": (formData.get("founderBusinessName") as string) || "",
-                      "Primary Sector": (formData.get("founderSector") as string) || "",
-                      "Funding Amount Requested": (formData.get("founderAmount") as string) || "",
-                      "Brief Description": (formData.get("founderPitch") as string) || "",
-                    };
-                  } else if (activeTab === "manager") {
-                    trackFields = {
-                      "Contact Name": (formData.get("managerContactName") as string) || "",
-                      "Firm Name": (formData.get("managerFirmName") as string) || "",
-                      "Current AUM": (formData.get("managerAum") as string) || "",
-                      "Target Co-Investment": (formData.get("managerTarget") as string) || "",
-                      "Investment Strategy": (formData.get("managerStrategy") as string) || "",
-                    };
-                  } else if (activeTab === "eso") {
-                    trackFields = {
-                      "Contact Person": (formData.get("esoContactPerson") as string) || "",
-                      "Organization Name": (formData.get("esoOrgName") as string) || "",
-                      "Program Focus": (formData.get("esoFocus") as string) || "",
-                      "Annual Cohort Size": (formData.get("esoCohortSize") as string) || "",
-                      "Program Details": (formData.get("esoProposal") as string) || "",
-                    };
+              {/* Dynamic Questions Form */}
+              <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10 space-y-8">
+                {FORMS_BY_NUMBER[selectedGroup.formNumber]?.map((q: FormQuestion) => {
+                  // Check conditional display
+                  if (q.condition && !q.condition(responses)) {
+                    return null;
                   }
 
-                  try {
-                    const res = await submitApplicationAction({
-                      track: activeTab,
-                      contactEmail,
-                      contactPhone,
-                      trackFields,
-                      honeypot,
-                    });
+                  const currentVal = responses[q.id];
 
-                    if (res.success) {
-                      setStatus("success");
-                    } else {
-                      setStatus("error");
-                      setErrorMessage(res.message || "Failed to submit application.");
-                    }
-                  } catch (err) {
-                    console.error(err);
-                    setStatus("error");
-                    setErrorMessage("Network error submitting application. Please try again.");
-                  }
-                }}>
-                  {/* Anti-spam honeypot */}
-                  <input
-                    type="text"
-                    name="honeypot"
-                    className="hidden"
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
-
-                  {status === "error" && (
-                    <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-center gap-3 text-sm">
-                      <AlertCircle size={20} className="flex-shrink-0" />
-                      <span>{errorMessage}</span>
-                    </div>
-                  )}
-
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeTab}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="flex flex-col gap-8"
+                  return (
+                    <div
+                      key={q.id}
+                      className="border-b border-[var(--color-evergreen)]/10 pb-8 last:border-b-0 last:pb-0"
                     >
-                      {activeTab === "founder" && (
-                        <>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="f-name" className="font-bold text-sm">Full Name</label>
-                              <input type="text" id="f-name" name="founderFullName" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="Your full name" required />
+                      <div className="mb-3">
+                        <label className="block text-sm font-bold text-[var(--color-evergreen)] leading-snug">
+                          <span className="text-[var(--color-tiger-orange)] font-mono mr-2">{q.ref}</span>
+                          {q.label} {q.required && <span className="text-[var(--color-tiger-orange)]">*</span>}
+                        </label>
+                        {q.helpText && (
+                          <span className="text-xs text-[var(--color-evergreen)]/60 italic mt-1 block">
+                            {q.helpText}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* 1. Single Select Options */}
+                      {q.type === "select" && q.options && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                          {q.options.map((opt) => {
+                            const isSelected = currentVal === opt;
+                            return (
+                              <button
+                                key={opt}
+                                type="button"
+                                onClick={() => setResponses({ ...responses, [q.id]: opt })}
+                                className={`text-left p-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all ${
+                                  isSelected
+                                    ? "bg-[var(--color-evergreen)] text-white border-[var(--color-evergreen)] shadow-sm"
+                                    : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] border-[var(--color-evergreen)]/15 hover:border-[var(--color-tiger-orange)]"
+                                }`}
+                              >
+                                {opt}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* 2. Multi-Select Options */}
+                      {q.type === "multi-select" && q.options && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                          {q.options.map((opt) => {
+                            const selectedList = Array.isArray(currentVal) ? currentVal : [];
+                            const isSelected = selectedList.includes(opt);
+
+                            return (
+                              <button
+                                key={opt}
+                                type="button"
+                                onClick={() => {
+                                  let updated: string[];
+                                  if (isSelected) {
+                                    updated = selectedList.filter((item) => item !== opt);
+                                  } else {
+                                    if (q.maxSelect && selectedList.length >= q.maxSelect) {
+                                      return; // Enforce max select
+                                    }
+                                    updated = [...selectedList, opt];
+                                  }
+                                  setResponses({ ...responses, [q.id]: updated });
+                                }}
+                                className={`text-left p-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all flex items-start justify-between gap-2 ${
+                                  isSelected
+                                    ? "bg-[var(--color-evergreen)] text-white border-[var(--color-evergreen)] shadow-sm"
+                                    : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] border-[var(--color-evergreen)]/15 hover:border-[var(--color-tiger-orange)]"
+                                }`}
+                              >
+                                <span>{opt}</span>
+                                {isSelected && <Check className="w-4 h-4 shrink-0 text-[var(--color-emerald)]" />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* 3. Text & Year Inputs */}
+                      {(q.type === "text" || q.type === "year") && (
+                        <input
+                          type={q.type === "year" ? "number" : "text"}
+                          value={(currentVal as string) || ""}
+                          placeholder={q.placeholder || "Enter response..."}
+                          onChange={(e) => setResponses({ ...responses, [q.id]: e.target.value })}
+                          className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl mt-2"
+                        />
+                      )}
+
+                      {/* 4. Dropdown Input */}
+                      {q.type === "dropdown" && q.options && (
+                        <select
+                          value={(currentVal as string) || ""}
+                          onChange={(e) => setResponses({ ...responses, [q.id]: e.target.value })}
+                          className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl mt-2"
+                        >
+                          <option value="">Select option...</option>
+                          {q.options.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+
+                      {/* 5. Textarea with live Word Counter */}
+                      {q.type === "textarea" && (
+                        <div className="mt-2">
+                          <textarea
+                            rows={4}
+                            value={(currentVal as string) || ""}
+                            placeholder={q.placeholder || "Provide concise details..."}
+                            onChange={(e) => setResponses({ ...responses, [q.id]: e.target.value })}
+                            className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl resize-none"
+                          />
+                          {q.maxWords && (
+                            <div className="flex justify-between items-center text-xs mt-1 px-1">
+                              <span
+                                className={
+                                  countWords((currentVal as string) || "") > q.maxWords
+                                    ? "text-red-600 font-bold"
+                                    : "text-[var(--color-evergreen)]/60"
+                                }
+                              >
+                                {countWords((currentVal as string) || "")} / {q.maxWords} words max
+                              </span>
+                              {countWords((currentVal as string) || "") > q.maxWords && (
+                                <span className="text-red-600 text-xs">Exceeds limit</span>
+                              )}
                             </div>
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="f-age" className="font-bold text-sm">Age</label>
-                              <input type="number" id="f-age" name="founderAge" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="e.g. 28" required />
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="f-bname" className="font-bold text-sm">Business Name</label>
-                              <input type="text" id="f-bname" name="founderBusinessName" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="Registered business name" required />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="f-sector" className="font-bold text-sm">Primary Sector</label>
-                              <select id="f-sector" name="founderSector" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all cursor-pointer" required>
-                                <option value="">Select a sector</option>
-                                <option value="agriculture">Agriculture</option>
-                                <option value="trade">Trade</option>
-                                <option value="creative">Creative</option>
-                                <option value="ict">ICT</option>
-                                <option value="other">Other</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-2">
-                            <label htmlFor="f-amount" className="font-bold text-sm">Funding Amount Requested (NGN)</label>
-                            <select id="f-amount" name="founderAmount" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all cursor-pointer" required>
-                              <option value="">Select range</option>
-                              <option value="Under ₦5,000,000">Under ₦5,000,000</option>
-                              <option value="₦5,000,000 - ₦20,000,000">₦5,000,000 - ₦20,000,000</option>
-                              <option value="₦20,000,000 - ₦50,000,000">₦20,000,000 - ₦50,000,000</option>
-                              <option value="Above ₦50,000,000">Above ₦50,000,000</option>
+                          )}
+                        </div>
+                      )}
+
+                      {/* 6. Form 2 Dual Currency Component (2.6) */}
+                      {q.type === "currency-dual" && (
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 bg-[var(--color-mint-cream)] p-4 rounded-xl border border-[var(--color-evergreen)]/15">
+                          <div>
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                              Currency
+                            </label>
+                            <select
+                              value={currencyForm2}
+                              onChange={(e) => setCurrencyForm2(e.target.value as "₦" | "US$")}
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                            >
+                              <option value="₦">Naira (₦)</option>
+                              <option value="US$">US Dollar (US$)</option>
                             </select>
                           </div>
-                          <div className="flex flex-col gap-2">
-                            <label htmlFor="f-pitch" className="font-bold text-sm">Brief Business Description</label>
-                            <textarea id="f-pitch" name="founderPitch" rows={5} className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 resize-none text-base transition-all" placeholder="What does your business do, and what will the funding be used for?" required></textarea>
+                          <div>
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                              Target Fund Size *
+                            </label>
+                            <input
+                              type="text"
+                              value={targetSizeForm2}
+                              onChange={(e) => setTargetSizeForm2(e.target.value)}
+                              placeholder="e.g. 10,000,000,000"
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                            />
                           </div>
-                        </>
+                          <div>
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                              Committed to Date *
+                            </label>
+                            <input
+                              type="text"
+                              value={committedForm2}
+                              onChange={(e) => setCommittedForm2(e.target.value)}
+                              placeholder="e.g. 3,500,000,000"
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                            />
+                          </div>
+                        </div>
                       )}
 
-                      {activeTab === "manager" && (
-                        <>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="m-name" className="font-bold text-sm">Contact Name</label>
-                              <input type="text" id="m-name" name="managerContactName" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="Full name" required />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="m-firm" className="font-bold text-sm">Firm Name</label>
-                              <input type="text" id="m-firm" name="managerFirmName" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="PE/VC Firm Name" required />
-                            </div>
+                      {/* 7. Form 4 Two-Selects Component (4.7) */}
+                      {q.type === "two-selects" && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3 bg-[var(--color-mint-cream)] p-4 rounded-xl border border-[var(--color-evergreen)]/15">
+                          <div>
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                              Youth-Led Share *
+                            </label>
+                            <select
+                              value={youthLedShare}
+                              onChange={(e) => setYouthLedShare(e.target.value)}
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                            >
+                              <option value="">Select range...</option>
+                              <option value="Below 25%">Below 25%</option>
+                              <option value="25% to 50%">25% to 50%</option>
+                              <option value="Above 50%">Above 50%</option>
+                              <option value="Not tracked">Not tracked</option>
+                            </select>
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="m-aum" className="font-bold text-sm">Current AUM (NGN/USD)</label>
-                              <input type="text" id="m-aum" name="managerAum" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="e.g. ₦10B / $20M" required />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="m-target" className="font-bold text-sm">Target Co-Investment (NGN)</label>
-                              <input type="text" id="m-target" name="managerTarget" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="Amount seeking from YEIB" required />
-                            </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                              Women-Led Share *
+                            </label>
+                            <select
+                              value={womenLedShare}
+                              onChange={(e) => setWomenLedShare(e.target.value)}
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                            >
+                              <option value="">Select range...</option>
+                              <option value="Below 25%">Below 25%</option>
+                              <option value="25% to 50%">25% to 50%</option>
+                              <option value="Above 50%">Above 50%</option>
+                              <option value="Not tracked">Not tracked</option>
+                            </select>
                           </div>
-                          <div className="flex flex-col gap-2">
-                            <label htmlFor="m-strategy" className="font-bold text-sm">Investment Strategy Summary</label>
-                            <textarea id="m-strategy" name="managerStrategy" rows={5} className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 resize-none text-base transition-all" placeholder="Briefly describe your firm's investment mandate and alignment with YEIB goals." required></textarea>
-                          </div>
-                        </>
+                        </div>
                       )}
 
-                      {activeTab === "eso" && (
-                        <>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="e-contact" className="font-bold text-sm">Contact Person</label>
-                              <input type="text" id="e-contact" name="esoContactPerson" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="Full name" required />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="e-org" className="font-bold text-sm">Organization Name</label>
-                              <input type="text" id="e-org" name="esoOrgName" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="Incubator / Accelerator Name" required />
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="e-focus" className="font-bold text-sm">Program Focus</label>
-                              <input type="text" id="e-focus" name="esoFocus" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="e.g. Agritech, General MSME" required />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <label htmlFor="e-cohort" className="font-bold text-sm">Annual Cohort Size</label>
-                              <input type="number" id="e-cohort" name="esoCohortSize" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="Number of startups supported per year" required />
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-2">
-                            <label htmlFor="e-proposal" className="font-bold text-sm">Proposed Program Details</label>
-                            <textarea id="e-proposal" name="esoProposal" rows={5} className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 resize-none text-base transition-all" placeholder="Describe the capacity building program you intend to run in partnership with YEIB." required></textarea>
-                          </div>
-                        </>
+                      {/* 8. PDF File Upload */}
+                      {q.type === "file" && (
+                        <div className="mt-3 p-5 border-2 border-dashed border-[var(--color-evergreen)]/20 rounded-xl bg-[var(--color-mint-cream)] text-center">
+                          <FileCheck className="w-8 h-8 text-[var(--color-evergreen)]/40 mx-auto mb-2" />
+                          <label className="inline-block cursor-pointer bg-white px-4 py-2 rounded-lg border border-[var(--color-evergreen)]/20 text-xs font-bold text-[var(--color-evergreen)] hover:border-[var(--color-tiger-orange)] transition-colors">
+                            <span>Choose PDF Document</span>
+                            <input
+                              type="file"
+                              accept="application/pdf"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  if (file.size > 10 * 1024 * 1024) {
+                                    alert("File exceeds maximum limit of 10 MB.");
+                                    return;
+                                  }
+                                  setResponses({ ...responses, [q.id]: `Attached: ${file.name} (${Math.round(file.size / 1024)} KB)` });
+                                }
+                              }}
+                            />
+                          </label>
+                          <span className="block text-xs text-[var(--color-evergreen)]/60 mt-2">
+                            {(currentVal as string) || "PDF format only, maximum size 10 MB (Optional)."}
+                          </span>
+                        </div>
                       )}
-                    </motion.div>
-                  </AnimatePresence>
-
-                  <div className="border-t border-gray-100 pt-6 mt-2">
-                    <h3 className="font-bold text-lg mb-6">Contact Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="flex flex-col gap-2">
-                        <label htmlFor="c-email" className="font-bold text-sm">Email Address</label>
-                        <input type="email" id="c-email" name="contactEmail" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="name@domain.com" required />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <label htmlFor="c-phone" className="font-bold text-sm">Phone Number</label>
-                        <input type="tel" id="c-phone" name="contactPhone" className="px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-tiger-orange)] focus:ring-2 focus:ring-[var(--color-tiger-orange)]/20 bg-gray-50 text-base transition-all" placeholder="+234..." required />
-                      </div>
                     </div>
-                  </div>
+                  );
+                })}
 
-                  <Button 
-                    type="submit" 
-                    size="lg" 
+                <div className="pt-6 border-t border-[var(--color-evergreen)]/10 flex justify-between items-center">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      setStep(1);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-xl py-3 px-6 text-xs font-bold uppercase tracking-widest"
+                  >
+                    Back to Section A
+                  </Button>
+
+                  <Button
+                    type="button"
+                    disabled={!canProceedFromSectionB()}
+                    onClick={() => {
+                      setStep(3);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2 disabled:opacity-40"
+                  >
+                    <span>Proceed to Declarations</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* ---------------- STEP 3: SECTION C (DECLARATIONS & CONSENT) ---------------- */}
+        {step === 3 && selectedGroup && (
+          <FadeIn direction="up">
+            <form onSubmit={handleSubmitFinal}>
+              {/* Anti-spam honeypot */}
+              <input type="text" name="honeypot" className="hidden" tabIndex={-1} autoComplete="off" />
+
+              <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10">
+                <div className="mb-8 pb-6 border-b border-[var(--color-evergreen)]/10">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-1">
+                    Section C • Final Review
+                  </span>
+                  <h2 className="font-[var(--font-asul)] text-3xl font-bold text-[var(--color-evergreen)]">
+                    Declarations & Legal Consent
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[var(--color-evergreen)]/70 mt-1">
+                    Please review the statutory declarations under the Nigeria Data Protection Act (NDPA 2023).
+                  </p>
+                </div>
+
+                {status === "error" && (
+                  <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-3 text-xs sm:text-sm">
+                    <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                    <span>{errorMessage || "Submission error. Please ensure all declarations are checked."}</span>
+                  </div>
+                )}
+
+                <div className="space-y-5">
+                  {/* C.1 */}
+                  <label className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={declarations.accuracyConfirmed}
+                      onChange={(e) =>
+                        setDeclarations({ ...declarations, accuracyConfirmed: e.target.checked })
+                      }
+                      className="mt-1 w-4 h-4 accent-[var(--color-evergreen)] rounded"
+                      required
+                    />
+                    <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
+                      <strong className="font-semibold block mb-0.5">C.1 Accuracy Declaration *</strong>
+                      I confirm that the information I have provided is accurate and complete to the best of my knowledge.
+                    </div>
+                  </label>
+
+                  {/* C.2 */}
+                  <label className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={declarations.nonBindingAcknowledged}
+                      onChange={(e) =>
+                        setDeclarations({ ...declarations, nonBindingAcknowledged: e.target.checked })
+                      }
+                      className="mt-1 w-4 h-4 accent-[var(--color-evergreen)] rounded"
+                      required
+                    />
+                    <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
+                      <strong className="font-semibold block mb-0.5">C.2 Non-Binding Submission *</strong>
+                      I understand that this submission is not an application for, or an offer of, financing, and that Nigeria YEIB Investment Funds is under no obligation to proceed.
+                    </div>
+                  </label>
+
+                  {/* C.3 */}
+                  <label className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={declarations.privacyConsent}
+                      onChange={(e) =>
+                        setDeclarations({ ...declarations, privacyConsent: e.target.checked })
+                      }
+                      className="mt-1 w-4 h-4 accent-[var(--color-evergreen)] rounded"
+                      required
+                    />
+                    <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
+                      <strong className="font-semibold block mb-0.5">C.3 NDPA 2023 Data Protection Consent *</strong>
+                      I consent to Nigeria YEIB Investment Funds processing the personal data in this form in accordance with the Nigeria Data Protection Act 2023 and its{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowPrivacyModal(true);
+                        }}
+                        className="text-[var(--color-tiger-orange)] underline font-bold"
+                      >
+                        privacy notice
+                      </button>
+                      .
+                    </div>
+                  </label>
+
+                  {/* C.4 Conditional on Form 1 Equity */}
+                  {isForm1Equity() && (
+                    <label className="flex items-start gap-3 p-4 rounded-xl bg-orange-50/50 border border-[var(--color-tiger-orange)]/30 cursor-pointer hover:border-[var(--color-tiger-orange)] transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={declarations.exclusionListConfirmed}
+                        onChange={(e) =>
+                          setDeclarations({ ...declarations, exclusionListConfirmed: e.target.checked })
+                        }
+                        className="mt-1 w-4 h-4 accent-[var(--color-tiger-orange)] rounded"
+                        required
+                      />
+                      <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
+                        <strong className="font-semibold block mb-0.5 text-[var(--color-tiger-orange)]">
+                          C.4 YEIB Exclusion List Compliance *
+                        </strong>
+                        I confirm that my business is not engaged in any activity on the{" "}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowExclusionModal(true);
+                          }}
+                          className="text-[var(--color-tiger-orange)] underline font-bold"
+                        >
+                          YEIB Exclusion List
+                        </button>
+                        .
+                      </div>
+                    </label>
+                  )}
+
+                  {/* C.5 Optional */}
+                  <label className="flex items-start gap-3 p-4 rounded-xl bg-white border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/20 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={declarations.shareWithPartnersConsent}
+                      onChange={(e) =>
+                        setDeclarations({ ...declarations, shareWithPartnersConsent: e.target.checked })
+                      }
+                      className="mt-1 w-4 h-4 accent-[var(--color-evergreen)] rounded"
+                    />
+                    <div className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 leading-relaxed">
+                      <strong className="font-semibold block mb-0.5 text-[var(--color-evergreen)]">
+                        C.5 Partner Sharing (Optional)
+                      </strong>
+                      I agree that my submission may be shared, where relevant, with partner fund managers, participating lenders, Impact Credit Guarantee Limited or vetted service providers, so that I can be considered for their support.
+                    </div>
+                  </label>
+
+                  {/* C.6 Optional */}
+                  <label className="flex items-start gap-3 p-4 rounded-xl bg-white border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/20 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={declarations.receiveUpdatesConsent}
+                      onChange={(e) =>
+                        setDeclarations({ ...declarations, receiveUpdatesConsent: e.target.checked })
+                      }
+                      className="mt-1 w-4 h-4 accent-[var(--color-evergreen)] rounded"
+                    />
+                    <div className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 leading-relaxed">
+                      <strong className="font-semibold block mb-0.5 text-[var(--color-evergreen)]">
+                        C.6 Communications (Optional)
+                      </strong>
+                      I would like to receive programmatic updates and notifications from Nigeria YEIB Investment Funds.
+                    </div>
+                  </label>
+                </div>
+
+                <div className="pt-8 border-t border-[var(--color-evergreen)]/10 flex justify-between items-center mt-8">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      setStep(2);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-xl py-3 px-6 text-xs font-bold uppercase tracking-widest"
+                  >
+                    Back to Questions
+                  </Button>
+
+                  <Button
+                    type="submit"
                     disabled={status === "submitting"}
-                    className="w-full mt-4 bg-[var(--color-tiger-orange)] hover:bg-[var(--color-tiger-orange)]/90 text-white rounded-xl py-6 flex items-center justify-center gap-2 group text-base overflow-hidden relative disabled:opacity-70"
+                    className="bg-[var(--color-tiger-orange)] hover:bg-orange-600 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2"
                   >
                     {status === "submitting" ? (
                       <>
-                        <Loader2 size={18} className="animate-spin" />
-                        Submitting Application...
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Submitting Intake...</span>
                       </>
                     ) : (
                       <>
-                        Submit Application <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        <span>Submit Application</span>
+                        <ArrowRight className="w-4 h-4" />
                       </>
                     )}
                   </Button>
-                </form>
-              )}
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div 
-            key="lead-view"
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="container mx-auto px-4 max-w-5xl"
-          >
-            {/* Header Section */}
-            <FadeIn direction="up">
-              <div className="mb-12 text-center max-w-3xl mx-auto">
-                <div className="inline-block px-4 py-1.5 rounded-full border border-[var(--color-tiger-orange)] text-[var(--color-tiger-orange)] text-xs font-bold tracking-widest capitalize mb-6">
-                  {currentData.tag}
                 </div>
-                <h1 className="font-[var(--font-asul)] text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-                  {currentData.title}
-                </h1>
-                <p className="text-xl text-[var(--color-evergreen)]/80 font-medium leading-relaxed">
-                  {currentData.desc}
+              </div>
+            </form>
+          </FadeIn>
+        )}
+
+        {/* ---------------- STEP 4: CONFIRMATION & REFERENCE ---------------- */}
+        {step === 4 && (
+          <FadeIn direction="up">
+            <div className="bg-white rounded-2xl p-8 sm:p-14 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.08)] border border-[var(--color-evergreen)]/10 max-w-2xl mx-auto text-center">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-mint-cream)] border-2 border-[var(--color-emerald)] flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-8 h-8 text-[var(--color-emerald)]" />
+              </div>
+
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-emerald)] block mb-2">
+                Submission Received
+              </span>
+              <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)] mb-4">
+                Thank you for applying.
+              </h2>
+              <p className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 leading-relaxed max-w-lg mx-auto mb-8">
+                Your initial screening response has been logged into the Nigeria YEIB Investment Funds evaluation pipeline.
+              </p>
+
+              {/* Reference ID Card */}
+              <div className="bg-[var(--color-evergreen)] text-white p-6 rounded-2xl mb-8 relative">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-emerald)] block mb-1">
+                  Your Application Reference Code
+                </span>
+                <div className="flex items-center justify-center gap-3 my-2">
+                  <span className="font-mono text-2xl sm:text-3xl font-bold tracking-wider text-white">
+                    {referenceNumber}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyReference}
+                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white/80 hover:text-white"
+                    title="Copy Reference Number"
+                  >
+                    {copiedRef ? <Check size={18} className="text-[var(--color-emerald)]" /> : <Copy size={18} />}
+                  </button>
+                </div>
+                <p className="text-[11px] text-[#E1C9B3] mt-2">
+                  Please quote this reference number in any correspondence with the Fund.
                 </p>
               </div>
-            </FadeIn>
 
-            {/* Tabs */}
-            <FadeIn direction="up" delay={100}>
-              <div className="flex flex-wrap justify-center gap-4 mb-16 relative z-10">
-                {(Object.keys(tabData) as ApplicantType[]).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className="relative px-6 py-3 rounded-full font-bold text-sm transition-colors duration-300 overflow-hidden"
-                  >
-                    {activeTab === tab && (
-                      <motion.div
-                        layoutId="active-tab-bg"
-                        className="absolute inset-0 bg-[var(--color-evergreen)] rounded-full z-[-1]"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                    <span className={activeTab === tab ? "text-white" : "text-[var(--color-evergreen)]/70 hover:text-[var(--color-evergreen)]"}>
-                      {tabData[tab].label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </FadeIn>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
-              
-              {/* Process */}
-              <FadeIn direction="up" delay={200} key={`process-${activeTab}`}>
-                <div className="h-full">
-                  <h2 className="font-[var(--font-asul)] text-3xl font-bold mb-8">The Process</h2>
-                  <div className="flex flex-col gap-8">
-                    <AnimatePresence mode="popLayout">
-                      {currentData.process.map((item, i) => (
-                        <motion.div 
-                          key={item.step}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1, duration: 0.4 }}
-                          className="flex gap-5 group"
-                        >
-                          <div className="text-[var(--color-tiger-orange)] font-[var(--font-asul)] font-bold text-3xl mt-1 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 origin-left">
-                            {item.step}
-                          </div>
-                          <div className="group-hover:translate-x-1 transition-transform duration-300">
-                            <h3 className="font-bold text-xl mb-2">{item.title}</h3>
-                            <p className="text-[var(--color-evergreen)]/70 text-base leading-relaxed">
-                              {item.description}
-                            </p>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
+              {/* Next steps notice */}
+              <div className="text-left bg-[var(--color-mint-cream)] p-5 rounded-xl border border-[var(--color-evergreen)]/10 text-xs sm:text-sm text-[var(--color-evergreen)] space-y-3 mb-8">
+                <div className="flex items-start gap-2.5">
+                  <Info className="w-4 h-4 text-[var(--color-evergreen)] shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">
+                    We review submissions on a rolling basis and aim to respond within <strong>5 to 10 working days</strong>. If your submission proceeds past initial screening, we will contact you to request further information and documentation.
+                  </p>
                 </div>
-              </FadeIn>
 
-              {/* Eligibility & Call to Action */}
-              <div className="flex flex-col gap-8">
-                <FadeIn direction="up" delay={300} key={`eligibility-${activeTab}`}>
-                  <motion.div 
-                    whileHover={{ scale: 1.02 }}
-                    className="bg-[var(--color-evergreen)] text-white rounded-2xl p-8 md:p-10 shadow-xl transition-all duration-300"
-                  >
-                    <h2 className="font-[var(--font-asul)] text-2xl font-bold mb-8">Basic Eligibility</h2>
-                    <ul className="flex flex-col gap-5">
-                      <AnimatePresence mode="popLayout">
-                        {currentData.eligibility.map((criterion, i) => (
-                          <motion.li 
-                            key={criterion}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1, duration: 0.4 }}
-                            className="flex items-start gap-4 group"
-                          >
-                            <CheckCircle2 className="text-[var(--color-tiger-orange)] flex-shrink-0 mt-1 group-hover:scale-110 transition-transform" size={24} />
-                            <span className="text-white/90 text-base font-medium leading-relaxed">{criterion}</span>
-                          </motion.li>
-                        ))}
-                      </AnimatePresence>
-                    </ul>
-                  </motion.div>
-                </FadeIn>
-
-                <FadeIn direction="up" delay={400}>
-                  <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg border border-[var(--color-evergreen)]/5 text-center">
-                    <h3 className="font-[var(--font-asul)] text-2xl font-bold mb-4">Ready to begin?</h3>
-                    <p className="text-[var(--color-evergreen)]/70 text-base mb-8">
-                      Click below to fill out the {currentData.label.toLowerCase()} intake form. It takes less than 5 minutes.
-                    </p>
-                    <Button 
-                      size="lg" 
-                      onClick={() => setView("form")}
-                      className="w-full bg-[var(--color-tiger-orange)] hover:bg-[var(--color-tiger-orange)]/90 text-white rounded-xl py-6 flex items-center justify-center gap-2 group text-base relative overflow-hidden"
-                    >
-                      <motion.div 
-                        className="absolute inset-0 bg-white/20"
-                        initial={{ x: "-100%" }}
-                        whileHover={{ x: "100%" }}
-                        transition={{ duration: 0.6, ease: "easeInOut" }}
-                      />
-                      Start Application <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </div>
-                </FadeIn>
+                <div className="border-t border-[var(--color-evergreen)]/10 pt-3">
+                  <p className="text-xs text-[var(--color-tiger-orange)] font-semibold leading-relaxed">
+                    <strong>Important Anti-Fraud Notice:</strong> Nigeria YEIB Investment Funds never charges a fee to apply and does not work through agents who charge for access. If anyone asks you for payment in our name, report it immediately to <strong>fraud-report@yeib-manco.com.ng</strong>.
+                  </p>
+                </div>
               </div>
-              
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    setStep(0);
+                    setSelectedGroup(null);
+                    setResponses({});
+                    setDeclarations({
+                      accuracyConfirmed: false,
+                      nonBindingAcknowledged: false,
+                      privacyConsent: false,
+                      exclusionListConfirmed: false,
+                      shareWithPartnersConsent: false,
+                      receiveUpdatesConsent: false,
+                    });
+                    setStatus("idle");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="w-full sm:w-auto bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest"
+                >
+                  Submit Another Stakeholder Inquiry
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => router.push("/")}
+                  className="w-full sm:w-auto bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest"
+                >
+                  Return to Home
+                </Button>
+              </div>
             </div>
-          </motion.div>
+          </FadeIn>
         )}
-      </AnimatePresence>
+      </div>
+
+      {/* Modal: NDPA 2023 Privacy Notice */}
+      {showPrivacyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-evergreen)]/90 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-8 max-h-[85vh] overflow-y-auto relative shadow-2xl">
+            <button
+              onClick={() => setShowPrivacyModal(false)}
+              className="absolute top-5 right-5 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-black transition-colors"
+            >
+              <X size={20} />
+            </button>
+            <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)] mb-3">
+              Data Protection & Privacy Notice
+            </h3>
+            <div className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 space-y-3 leading-relaxed">
+              <p>
+                In compliance with the <strong>Nigeria Data Protection Act (NDPA) 2023</strong>, Nigeria YEIB Investment Funds collects and processes personal information solely for assessing eligibility, initial screening, and administering investment and capacity-building programs.
+              </p>
+              <p>
+                Your personal and corporate data is secured using enterprise-grade encryption. Data is retained for the evaluation period and will not be disclosed to unauthorised third parties without your prior written consent, except where sharing is explicitly authorised with our co-investment partners, Impact Credit Guarantee Limited (ICGL), and vetted business development service providers.
+              </p>
+              <p>
+                You retain statutory rights to request access, rectification, or deletion of your personal records by contacting <strong>privacy@yeib-manco.com.ng</strong>.
+              </p>
+            </div>
+            <div className="mt-6 text-right">
+              <Button
+                type="button"
+                onClick={() => setShowPrivacyModal(false)}
+                className="bg-[var(--color-evergreen)] text-white text-xs uppercase tracking-wider py-2.5 px-6 rounded-xl"
+              >
+                Understood
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: YEIB Exclusion List */}
+      {showExclusionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-evergreen)]/90 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-8 max-h-[85vh] overflow-y-auto relative shadow-2xl">
+            <button
+              onClick={() => setShowExclusionModal(false)}
+              className="absolute top-5 right-5 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-black transition-colors"
+            >
+              <X size={20} />
+            </button>
+            <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)] mb-3">
+              YEIB Environmental & Social Exclusion List
+            </h3>
+            <p className="text-xs text-[var(--color-evergreen)]/70 mb-4">
+              In accordance with our statutory ESG and impact covenants, Nigeria YEIB Investment Funds does not finance or commit capital to entities engaged in:
+            </p>
+            <ul className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 space-y-2 list-disc pl-5 leading-relaxed">
+              <li>Production or trade in any product or activity deemed illegal under Nigerian law or international conventions.</li>
+              <li>Production or trade in weapons, munitions, and military armaments.</li>
+              <li>Production or trade in tobacco and unbonded distilled spirits.</li>
+              <li>Gambling, casinos, and equivalent wagering operations.</li>
+              <li>Production or trade in radioactive materials, unbounded asbestos fibers, or hazardous chemicals.</li>
+              <li>Commercial logging operations or purchase of logging equipment for use in primary tropical moist forest.</li>
+              <li>Activities involving any form of forced labor, harmful child labor, or human rights infringements.</li>
+            </ul>
+            <div className="mt-6 text-right">
+              <Button
+                type="button"
+                onClick={() => setShowExclusionModal(false)}
+                className="bg-[var(--color-evergreen)] text-white text-xs uppercase tracking-wider py-2.5 px-6 rounded-xl"
+              >
+                Close Notice
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
-
