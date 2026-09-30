@@ -149,7 +149,8 @@ export async function submitApplicationAction(data: ApplicationInput): Promise<F
   // Handle New 6-Stakeholder schema
   if ("formNumber" in data) {
     const year = new Date().getFullYear();
-    const sequence = Math.floor(1000 + Math.random() * 9000);
+    const sequenceNum = Math.floor(1 + Math.random() * 9999);
+    const sequence = String(sequenceNum).padStart(4, "0");
     const referenceNumber = `YEIB-${data.formNumber}-${year}-${sequence}`;
 
     const detailsList: { label: string; value: string }[] = [

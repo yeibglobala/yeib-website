@@ -16,7 +16,6 @@ import {
   Info,
   X,
   FileCheck,
-  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -32,49 +31,42 @@ import { FORMS_BY_NUMBER, FormQuestion } from "../data/formQuestions";
 const STAKEHOLDER_META: Record<
   number,
   {
-    theme: "dark" | "light";
     trackPill: string;
     subheading: string;
     badges: string[];
   }
 > = {
   1: {
-    theme: "dark",
     trackPill: "FORM 01 • DIRECT WINDOW",
     subheading:
       "Youth-led businesses with a working product, paying customers, and a plan to scale. Access equity, quasi-equity, and capacity grants.",
     badges: ["Ages 18–35", "Equity & Quasi-Equity", "BDS Grants"],
   },
   2: {
-    theme: "light",
     trackPill: "FORM 02 • INDIRECT WINDOW",
     subheading:
       "Venture capital & private equity fund managers investing in early and growth-stage Nigerian youth enterprises.",
     badges: ["LP Commitments", "Co-Investment", "SEC Registered"],
   },
   3: {
-    theme: "dark",
     trackPill: "FORM 03 • CREDIT GUARANTEES",
     subheading:
       "CBN-licensed commercial, merchant, and microfinance banks expanding lending to youth-led MSMEs with ICGL risk-sharing.",
     badges: ["Individual & Portfolio", "CBN Licensed", "ICGL Partner Window"],
   },
   4: {
-    theme: "light",
     trackPill: "FORM 04 • ECOSYSTEM FUND",
     subheading:
       "Incubators, accelerators, innovation hubs, and BDS providers delivering verified capacity-building and applying for grants.",
     badges: ["Vetted Provider Pool", "Capacity Grants", "Pan-Nigeria"],
   },
   5: {
-    theme: "dark",
     trackPill: "FORM 05 • POLICY & RESEARCH",
     subheading:
       "Universities, research institutes, think tanks, and public agencies proposing policy dialogue, entrepreneurship research, or MSME data.",
     badges: ["Convening & Policy", "MSME Data", "Thought Leadership"],
   },
   6: {
-    theme: "light",
     trackPill: "FORM 06 • INSTITUTIONAL PARTNERS",
     subheading:
       "DFIs, bilateral agencies, foundations, and institutional investors exploring co-investment and capital partnerships with the Funds.",
@@ -265,7 +257,11 @@ export function ApplySection() {
   };
 
   return (
-    <section className="bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] min-h-screen pt-28 pb-28 relative">
+    <section
+      id="main-content"
+      aria-label="Stakeholder Application Portal"
+      className="bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] min-h-screen pt-36 sm:pt-44 md:pt-48 lg:pt-52 pb-28 relative scroll-mt-28"
+    >
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Step Indicator Header (When inside Steps 1 to 3) */}
         {step >= 1 && step <= 3 && selectedGroup && (
@@ -273,11 +269,12 @@ export function ApplySection() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <button
                 type="button"
+                aria-label="Return to previous application step"
                 onClick={() => {
                   setStep((prev) => Math.max(0, prev - 1));
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
-                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-evergreen)]/70 hover:text-[var(--color-tiger-orange)] transition-colors group w-fit"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-evergreen)]/70 hover:text-[var(--color-tiger-orange)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-tiger-orange)] rounded-lg p-1.5 transition-colors group w-fit"
               >
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                 <span>Back to {step === 1 ? "Stakeholder Selector" : "Previous Step"}</span>
@@ -292,11 +289,18 @@ export function ApplySection() {
             </div>
 
             {/* Concept VC Segmented Progress Pills */}
-            <div className="grid grid-cols-3 gap-3 p-1.5 rounded-2xl bg-white/70 border border-[var(--color-evergreen)]/10 shadow-sm backdrop-blur-sm">
+            <div
+              role="tablist"
+              aria-label="Application progress steps"
+              className="grid grid-cols-3 gap-3 p-1.5 rounded-2xl bg-white/70 border border-[var(--color-evergreen)]/10 shadow-sm backdrop-blur-sm"
+            >
               <div
+                role="tab"
+                aria-selected={step === 1}
+                aria-label="Step 1: Contact Details"
                 className={`py-3 px-4 rounded-xl text-center text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                   step === 1
-                    ? "bg-[var(--color-evergreen)] text-white shadow-md"
+                    ? "bg-[var(--color-evergreen)] text-white shadow-md ring-2 ring-[var(--color-evergreen)]/20"
                     : step > 1
                     ? "bg-[var(--color-evergreen)]/10 text-[var(--color-evergreen)]"
                     : "text-[var(--color-evergreen)]/40"
@@ -307,9 +311,12 @@ export function ApplySection() {
               </div>
 
               <div
+                role="tab"
+                aria-selected={step === 2}
+                aria-label="Step 2: Screening Questions"
                 className={`py-3 px-4 rounded-xl text-center text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                   step === 2
-                    ? "bg-[var(--color-evergreen)] text-white shadow-md"
+                    ? "bg-[var(--color-evergreen)] text-white shadow-md ring-2 ring-[var(--color-evergreen)]/20"
                     : step > 2
                     ? "bg-[var(--color-evergreen)]/10 text-[var(--color-evergreen)]"
                     : "text-[var(--color-evergreen)]/40"
@@ -320,9 +327,12 @@ export function ApplySection() {
               </div>
 
               <div
+                role="tab"
+                aria-selected={step === 3}
+                aria-label="Step 3: Legal Declarations"
                 className={`py-3 px-4 rounded-xl text-center text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                   step === 3
-                    ? "bg-[var(--color-evergreen)] text-white shadow-md"
+                    ? "bg-[var(--color-evergreen)] text-white shadow-md ring-2 ring-[var(--color-evergreen)]/20"
                     : "text-[var(--color-evergreen)]/40"
                 }`}
               >
@@ -339,30 +349,29 @@ export function ApplySection() {
         {step === 0 && (
           <FadeIn direction="up">
             {/* Bold Editorial Top Hero */}
-            <div className="mb-20 max-w-5xl">
-              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[var(--color-evergreen)] text-white text-[11px] font-bold tracking-widest uppercase mb-8 shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-[var(--color-mint-leaf)]" />
-                <span>N-YEIB Stakeholder Intake Portal</span>
-              </div>
-
-              <h1 className="font-[var(--font-asul)] text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[var(--color-evergreen)] leading-[1.08] mb-8">
-                Patient capital, risk-sharing & capacity{" "}
-                <span className="text-[var(--color-tiger-orange)] italic font-serif">built for Nigeria&apos;s</span> youth economy.
+            <div className="mb-20 sm:mb-24 md:mb-28 lg:mb-32 max-w-4xl">
+              <h1 className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--color-evergreen)] leading-[1.08] mb-6">
+                Work with Nigeria YEIB{" "}
+                <span className="text-[var(--color-tiger-orange)] italic font-serif">Investment Funds</span>
               </h1>
 
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start pt-4 border-t border-[var(--color-evergreen)]/15">
-                <p className="md:col-span-8 text-base sm:text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-normal">
-                  Nigeria YEIB Investment Funds provides catalytic financing and ecosystem capacity across the 36 states and the Federal Capital Territory. We work directly with entrepreneurs and through fund managers, lenders, and ecosystem partners sharing our focus on job creation.
-                </p>
+              <p className="text-base sm:text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-normal mb-8 max-w-3xl">
+                Providing patient capital, risk-sharing, and capacity support to growth-oriented, youth-led businesses across Nigeria. Select the option that best describes you to start your initial screening.
+              </p>
 
-                <div className="md:col-span-4 bg-white/90 backdrop-blur-sm p-5 rounded-2xl border border-[var(--color-evergreen)]/10 shadow-sm space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]">
-                    <ShieldCheck className="w-4 h-4 text-[var(--color-mint-leaf)]" />
-                    <span>Initial Screening Policy</span>
-                  </div>
-                  <p className="text-xs text-[var(--color-evergreen)]/70 leading-relaxed font-medium">
-                    Takes ~5 minutes. Zero application fees. We never work through intermediaries who charge for access.
-                  </p>
+              {/* Accessible Trust & Process Indicators */}
+              <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-evergreen)]/80">
+                <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[var(--color-evergreen)]/10 font-semibold shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-[var(--color-mint-leaf)]" />
+                  <span>Takes ~5 minutes</span>
+                </div>
+                <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[var(--color-evergreen)]/10 font-semibold shadow-xs">
+                  <ShieldCheck className="w-4 h-4 text-[var(--color-mint-leaf)]" />
+                  <span>Zero application fees</span>
+                </div>
+                <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[var(--color-evergreen)]/10 font-semibold shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-[var(--color-tiger-orange)]" />
+                  <span>Direct submission • No intermediaries</span>
                 </div>
               </div>
             </div>
@@ -371,9 +380,6 @@ export function ApplySection() {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-evergreen)]/15">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block">
-                    Choose Your Path
-                  </span>
                   <h2 className="font-[var(--font-asul)] text-2xl sm:text-3xl font-bold text-[var(--color-evergreen)]">
                     Select your stakeholder group
                   </h2>
@@ -383,11 +389,10 @@ export function ApplySection() {
                 </span>
               </div>
 
-              {/* The 6 Concept.vc Style High-Contrast Cards */}
+              {/* The 6 Concept.vc Style High-Contrast Cards (White Fill with Orange Hover) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {STAKEHOLDER_GROUPS.map((group) => {
                   const meta = STAKEHOLDER_META[group.formNumber];
-                  const isDark = meta.theme === "dark";
 
                   return (
                     <motion.div
@@ -395,82 +400,48 @@ export function ApplySection() {
                       whileHover={{ y: -6, scale: 1.01 }}
                       transition={{ duration: 0.25, ease: "easeOut" }}
                       onClick={() => handleSelectGroup(group)}
-                      className={`group relative rounded-3xl p-8 md:p-9 cursor-pointer flex flex-col justify-between min-h-[380px] transition-all duration-300 ${
-                        isDark
-                          ? "bg-[var(--color-evergreen)] text-white border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,49,36,0.3)] hover:border-[var(--color-mint-leaf)]"
-                          : "bg-white text-[var(--color-evergreen)] border border-[var(--color-evergreen)]/15 shadow-[0_15px_35px_-10px_rgba(0,49,36,0.06)] hover:border-[var(--color-tiger-orange)]"
-                      }`}
+                      className="group relative rounded-3xl p-8 md:p-9 cursor-pointer flex flex-col justify-between min-h-[380px] transition-all duration-300 bg-white text-[var(--color-evergreen)] border border-[var(--color-evergreen)]/15 shadow-[0_15px_35px_-10px_rgba(0,49,36,0.06)] hover:bg-[var(--color-tiger-orange)] hover:border-[var(--color-tiger-orange)] hover:shadow-[0_22px_45px_-10px_rgba(248,132,4,0.35)]"
                     >
-                      {/* Top Row: Track Pill & Concept.vc Top-Right Diagonal Arrow */}
+                      {/* Top Row: Track Pill & Diagonal Arrow */}
                       <div>
                         <div className="flex items-start justify-between gap-4 mb-8">
-                          <span
-                            className={`text-[11px] font-mono font-bold tracking-wider uppercase px-3 py-1.5 rounded-full ${
-                              isDark
-                                ? "bg-white/10 text-[var(--color-mint-leaf)]"
-                                : "bg-[var(--color-evergreen)]/5 text-[var(--color-tiger-orange)]"
-                            }`}
-                          >
+                          <span className="text-[11px] font-mono font-bold tracking-wider uppercase px-3 py-1.5 rounded-full bg-[var(--color-evergreen)]/5 text-[var(--color-tiger-orange)] group-hover:bg-white/20 group-hover:text-white transition-colors">
                             {meta.trackPill}
                           </span>
 
-                          {/* The Distinctive Concept.vc Diagonal Arrow */}
-                          <div
-                            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                              isDark
-                                ? "bg-white/10 text-white group-hover:bg-[var(--color-mint-leaf)] group-hover:text-[var(--color-evergreen)]"
-                                : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] group-hover:bg-[var(--color-tiger-orange)] group-hover:text-white"
-                            }`}
-                          >
+                          {/* Distinctive Top-Right Diagonal Arrow */}
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] group-hover:bg-white group-hover:text-[var(--color-tiger-orange)] shadow-xs">
                             <ArrowUpRight className="w-6 h-6 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                           </div>
                         </div>
 
                         {/* Title */}
-                        <h3
-                          className={`font-[var(--font-asul)] text-2xl sm:text-3xl font-bold tracking-tight mb-4 leading-snug ${
-                            isDark ? "text-white" : "text-[var(--color-evergreen)]"
-                          }`}
-                        >
+                        <h3 className="font-[var(--font-asul)] text-2xl sm:text-3xl font-bold tracking-tight mb-4 leading-snug text-[var(--color-evergreen)] group-hover:text-white transition-colors">
                           {group.name}
                         </h3>
 
                         {/* Description */}
-                        <p
-                          className={`text-sm leading-relaxed font-normal mb-8 ${
-                            isDark ? "text-white/80" : "text-[var(--color-evergreen)]/75"
-                          }`}
-                        >
+                        <p className="text-sm leading-relaxed font-normal mb-8 text-[var(--color-evergreen)]/75 group-hover:text-white/95 transition-colors">
                           {meta.subheading}
                         </p>
                       </div>
 
                       {/* Bottom Footer: Feature Badges & Apply Trigger */}
-                      <div className={`pt-6 border-t ${isDark ? "border-white/10" : "border-[var(--color-evergreen)]/10"}`}>
+                      <div className="pt-6 border-t border-[var(--color-evergreen)]/10 group-hover:border-white/20 transition-colors">
                         <div className="flex flex-wrap gap-2 mb-4">
                           {meta.badges.map((badge) => (
                             <span
                               key={badge}
-                              className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-md ${
-                                isDark
-                                  ? "bg-white/5 text-white/70 border border-white/10"
-                                  : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)]/80 border border-[var(--color-evergreen)]/10"
-                              }`}
+                              className="text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-md bg-[var(--color-mint-cream)] text-[var(--color-evergreen)]/80 border border-[var(--color-evergreen)]/10 group-hover:bg-white/20 group-hover:text-white group-hover:border-white/20 transition-colors"
                             >
                               {badge}
                             </span>
                           ))}
                         </div>
 
-                        <div
-                          className={`flex items-center justify-between text-xs font-bold uppercase tracking-wider ${
-                            isDark
-                              ? "text-[var(--color-mint-leaf)] group-hover:text-white"
-                              : "text-[var(--color-evergreen)] group-hover:text-[var(--color-tiger-orange)]"
-                          } transition-colors`}
-                        >
+                        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)] group-hover:text-white transition-colors">
                           <span>Start Screening</span>
-                          <span className="font-mono text-sm">→</span>
+                          <span className="font-mono text-sm transform group-hover:translate-x-1 transition-transform">→</span>
                         </div>
                       </div>
                     </motion.div>
@@ -626,7 +597,7 @@ export function ApplySection() {
                       <option value="Event or conference">Event or conference</option>
                       <option value="Social media">Social media</option>
                       <option value="News or press">News or press</option>
-                      <option value="Partner organisation">Partner organisation</option>
+                      <option value="Partner organisation (please specify)">Partner organisation (please specify)</option>
                       <option value="Other">Other</option>
                     </select>
                   </div>

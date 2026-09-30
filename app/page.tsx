@@ -20,12 +20,16 @@ export default function Home() {
       <FounderCarousel />
       <EligibilitySection />
       
-      <section className="w-full h-[50vh] md:h-[70vh] relative overflow-hidden">
+      <section className="w-full relative overflow-hidden bg-[var(--color-mint-cream)]">
         <Image 
           src="/asset/section-image.png" 
           alt="YEIB Office and Environment" 
-          fill 
-          className="object-cover object-center" 
+          width={1535}
+          height={1024}
+          sizes="100vw"
+          unoptimized={true}
+          priority
+          className="w-full h-auto block"
         />
       </section>
 

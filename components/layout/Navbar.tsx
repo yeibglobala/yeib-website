@@ -18,6 +18,12 @@ export function Navbar() {
 
   return (
     <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-6xl">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--color-evergreen)] focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-tiger-orange)] text-xs font-bold uppercase tracking-wider"
+      >
+        Skip to main content
+      </a>
       <div className="bg-white/70 backdrop-blur-lg rounded-full px-4 sm:px-6 md:px-8 h-14 sm:h-16 md:h-20 flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/40">
         
         {/* Logo */}

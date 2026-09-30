@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 
 export function GrowthCapital() {
   const points = [
@@ -20,16 +19,8 @@ export function GrowthCapital() {
     }
   ];
 
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-
   return (
-    <section className="bg-[var(--color-mint-cream)] pt-24 md:pt-32 overflow-hidden border-b border-gray-200" ref={containerRef}>
+    <section className="bg-[var(--color-mint-cream)] pt-24 md:pt-32 overflow-hidden border-b border-gray-200">
       <div className="container mx-auto px-4 max-w-6xl mb-16 md:mb-24">
         <motion.div 
           initial="hidden"
@@ -94,22 +85,23 @@ export function GrowthCapital() {
         </motion.div>
       </div>
 
-      {/* Full Bleed Image Showcase with Parallax */}
+      {/* Full Bleed Image Showcase */}
       <motion.div 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1 }}
-        className="w-full h-[50vh] md:h-[70vh] relative overflow-hidden"
+        className="w-full relative overflow-hidden"
       >
-        <motion.div style={{ y, width: "100%", height: "120%" }} className="absolute -top-[10%] left-0">
-          <Image 
-            src="/asset/section-image.png"
-            alt="Minimalist architectural office space"
-            fill
-            className="object-cover object-center"
-          />
-        </motion.div>
+        <Image 
+          src="/asset/section-image.png"
+          alt="YEIB Office and Environment"
+          width={1535}
+          height={1024}
+          sizes="100vw"
+          unoptimized={true}
+          className="w-full h-auto block"
+        />
       </motion.div>
     </section>
   );
