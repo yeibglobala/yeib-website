@@ -7,20 +7,16 @@ import {
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
+  ArrowUpRight,
   Loader2,
   AlertCircle,
   Copy,
   Check,
-  Building2,
-  TrendingUp,
-  Landmark,
-  GraduationCap,
-  FileSpreadsheet,
-  Globe2,
   ShieldCheck,
   Info,
   X,
   FileCheck,
+  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -31,6 +27,60 @@ import {
   StakeholderGroup,
 } from "../data/stakeholderForms";
 import { FORMS_BY_NUMBER, FormQuestion } from "../data/formQuestions";
+
+// Curated Concept VC-style metadata for each stakeholder group
+const STAKEHOLDER_META: Record<
+  number,
+  {
+    theme: "dark" | "light";
+    trackPill: string;
+    subheading: string;
+    badges: string[];
+  }
+> = {
+  1: {
+    theme: "dark",
+    trackPill: "FORM 01 • DIRECT WINDOW",
+    subheading:
+      "Youth-led businesses with a working product, paying customers, and a plan to scale. Access equity, quasi-equity, and capacity grants.",
+    badges: ["Ages 18–35", "Equity & Quasi-Equity", "BDS Grants"],
+  },
+  2: {
+    theme: "light",
+    trackPill: "FORM 02 • INDIRECT WINDOW",
+    subheading:
+      "Venture capital & private equity fund managers investing in early and growth-stage Nigerian youth enterprises.",
+    badges: ["LP Commitments", "Co-Investment", "SEC Registered"],
+  },
+  3: {
+    theme: "dark",
+    trackPill: "FORM 03 • CREDIT GUARANTEES",
+    subheading:
+      "CBN-licensed commercial, merchant, and microfinance banks expanding lending to youth-led MSMEs with ICGL risk-sharing.",
+    badges: ["Individual & Portfolio", "CBN Licensed", "ICGL Partner Window"],
+  },
+  4: {
+    theme: "light",
+    trackPill: "FORM 04 • ECOSYSTEM FUND",
+    subheading:
+      "Incubators, accelerators, innovation hubs, and BDS providers delivering verified capacity-building and applying for grants.",
+    badges: ["Vetted Provider Pool", "Capacity Grants", "Pan-Nigeria"],
+  },
+  5: {
+    theme: "dark",
+    trackPill: "FORM 05 • POLICY & RESEARCH",
+    subheading:
+      "Universities, research institutes, think tanks, and public agencies proposing policy dialogue, entrepreneurship research, or MSME data.",
+    badges: ["Convening & Policy", "MSME Data", "Thought Leadership"],
+  },
+  6: {
+    theme: "light",
+    trackPill: "FORM 06 • INSTITUTIONAL PARTNERS",
+    subheading:
+      "DFIs, bilateral agencies, foundations, and institutional investors exploring co-investment and capital partnerships with the Funds.",
+    badges: ["DFIs & Bilaterals", "Co-Investment", "Strategic Capital"],
+  },
+};
 
 export function ApplySection() {
   const router = useRouter();
@@ -214,167 +264,238 @@ export function ApplySection() {
     }
   };
 
-  // Group icons
-  const getGroupIcon = (formNum: number) => {
-    switch (formNum) {
-      case 1:
-        return <TrendingUp className="w-6 h-6 text-[var(--color-tiger-orange)]" />;
-      case 2:
-        return <Building2 className="w-6 h-6 text-[var(--color-emerald)]" />;
-      case 3:
-        return <Landmark className="w-6 h-6 text-[var(--color-tiger-orange)]" />;
-      case 4:
-        return <GraduationCap className="w-6 h-6 text-[var(--color-emerald)]" />;
-      case 5:
-        return <FileSpreadsheet className="w-6 h-6 text-[var(--color-tiger-orange)]" />;
-      case 6:
-        return <Globe2 className="w-6 h-6 text-[var(--color-emerald)]" />;
-      default:
-        return <Building2 className="w-6 h-6" />;
-    }
-  };
-
   return (
-    <section className="bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] min-h-screen pt-32 pb-24 overflow-hidden relative">
-      {/* Background blur highlight */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-[var(--color-tiger-orange)]/5 rounded-bl-full -z-10 blur-3xl pointer-events-none" />
-
-      <div className="container mx-auto px-4 max-w-5xl">
-        {/* Step Indicator Header (Steps 1 to 3) */}
+    <section className="bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] min-h-screen pt-28 pb-28 relative">
+      <div className="container mx-auto px-4 max-w-7xl">
+        {/* Step Indicator Header (When inside Steps 1 to 3) */}
         {step >= 1 && step <= 3 && selectedGroup && (
-          <div className="mb-10">
-            <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="mb-12 max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <button
                 type="button"
                 onClick={() => {
                   setStep((prev) => Math.max(0, prev - 1));
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
-                className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]/70 hover:text-[var(--color-tiger-orange)] transition-colors group"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-evergreen)]/70 hover:text-[var(--color-tiger-orange)] transition-colors group w-fit"
               >
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                <span>Back</span>
+                <span>Back to {step === 1 ? "Stakeholder Selector" : "Previous Step"}</span>
               </button>
 
-              <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[var(--color-tiger-orange)]">
-                <span>Form {selectedGroup.formNumber}</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-evergreen)]/5 border border-[var(--color-evergreen)]/10 text-xs font-bold tracking-wider uppercase text-[var(--color-evergreen)]">
+                <span className="w-2 h-2 rounded-full bg-[var(--color-tiger-orange)]" />
+                <span>Form 0{selectedGroup.formNumber}</span>
                 <span className="text-[var(--color-evergreen)]/30">•</span>
-                <span className="text-[var(--color-evergreen)]/70">{selectedGroup.name}</span>
+                <span className="font-semibold text-[var(--color-evergreen)]/80">{selectedGroup.name}</span>
               </div>
             </div>
 
-            {/* Stepper Progress Bar */}
-            <div className="grid grid-cols-3 gap-2">
+            {/* Concept VC Segmented Progress Pills */}
+            <div className="grid grid-cols-3 gap-3 p-1.5 rounded-2xl bg-white/70 border border-[var(--color-evergreen)]/10 shadow-sm backdrop-blur-sm">
               <div
-                className={`h-1.5 transition-all duration-300 ${
-                  step >= 1 ? "bg-[var(--color-evergreen)]" : "bg-[var(--color-evergreen)]/15"
+                className={`py-3 px-4 rounded-xl text-center text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                  step === 1
+                    ? "bg-[var(--color-evergreen)] text-white shadow-md"
+                    : step > 1
+                    ? "bg-[var(--color-evergreen)]/10 text-[var(--color-evergreen)]"
+                    : "text-[var(--color-evergreen)]/40"
                 }`}
-              />
+              >
+                <span className="font-mono">01</span>
+                <span className="hidden sm:inline">Contact</span>
+              </div>
+
               <div
-                className={`h-1.5 transition-all duration-300 ${
-                  step >= 2 ? "bg-[var(--color-evergreen)]" : "bg-[var(--color-evergreen)]/15"
+                className={`py-3 px-4 rounded-xl text-center text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                  step === 2
+                    ? "bg-[var(--color-evergreen)] text-white shadow-md"
+                    : step > 2
+                    ? "bg-[var(--color-evergreen)]/10 text-[var(--color-evergreen)]"
+                    : "text-[var(--color-evergreen)]/40"
                 }`}
-              />
+              >
+                <span className="font-mono">02</span>
+                <span className="hidden sm:inline">Screening</span>
+              </div>
+
               <div
-                className={`h-1.5 transition-all duration-300 ${
-                  step >= 3 ? "bg-[var(--color-evergreen)]" : "bg-[var(--color-evergreen)]/15"
+                className={`py-3 px-4 rounded-xl text-center text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                  step === 3
+                    ? "bg-[var(--color-evergreen)] text-white shadow-md"
+                    : "text-[var(--color-evergreen)]/40"
                 }`}
-              />
-            </div>
-            <div className="flex justify-between text-[11px] font-semibold tracking-wider uppercase text-[var(--color-evergreen)]/60 mt-2">
-              <span className={step === 1 ? "text-[var(--color-evergreen)] font-bold" : ""}>
-                1. Contact Details
-              </span>
-              <span className={step === 2 ? "text-[var(--color-evergreen)] font-bold" : ""}>
-                2. Screening Questions
-              </span>
-              <span className={step === 3 ? "text-[var(--color-evergreen)] font-bold" : ""}>
-                3. Declarations & Consent
-              </span>
+              >
+                <span className="font-mono">03</span>
+                <span className="hidden sm:inline">Declarations</span>
+              </div>
             </div>
           </div>
         )}
 
-        {/* ---------------- STEP 0: STAKEHOLDER SELECTOR ---------------- */}
+        {/* ========================================================================= */}
+        {/* STEP 0: CONCEPT VC INSPIRED STAKEHOLDER PORTAL HERO & CARDS               */}
+        {/* ========================================================================= */}
         {step === 0 && (
           <FadeIn direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-block px-4 py-1.5 rounded-full border border-[var(--color-tiger-orange)] text-[var(--color-tiger-orange)] text-xs font-bold tracking-widest uppercase mb-4">
-                Stakeholder Intake Portal
-              </span>
-              <h1 className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[var(--color-evergreen)] mb-6">
-                Work with Nigeria YEIB Investment Funds
+            {/* Bold Editorial Top Hero */}
+            <div className="mb-20 max-w-5xl">
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[var(--color-evergreen)] text-white text-[11px] font-bold tracking-widest uppercase mb-8 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-[var(--color-mint-leaf)]" />
+                <span>N-YEIB Stakeholder Intake Portal</span>
+              </div>
+
+              <h1 className="font-[var(--font-asul)] text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[var(--color-evergreen)] leading-[1.08] mb-8">
+                Patient capital, risk-sharing & capacity{" "}
+                <span className="text-[var(--color-tiger-orange)] italic font-serif">built for Nigeria&apos;s</span> youth economy.
               </h1>
-              <p className="text-base sm:text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-normal">
-                Nigeria YEIB Investment Funds provides patient capital, risk-sharing and capacity-building
-                support to growth-oriented, youth-led businesses across the 36 states and the Federal Capital
-                Territory. We work directly with entrepreneurs and through fund managers, lenders and ecosystem
-                organisations that share our focus on job creation.
-              </p>
-              <div className="mt-6 p-4 rounded-xl bg-white/70 border border-[var(--color-evergreen)]/10 text-xs sm:text-sm text-[var(--color-evergreen)]/80 max-w-2xl mx-auto flex items-center justify-center gap-3">
-                <ShieldCheck className="w-5 h-5 text-[var(--color-emerald)] shrink-0" />
-                <span>
-                  <strong>No fee to apply:</strong> It takes about five minutes. We never work through intermediaries who charge for access.
-                </span>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start pt-4 border-t border-[var(--color-evergreen)]/15">
+                <p className="md:col-span-8 text-base sm:text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-normal">
+                  Nigeria YEIB Investment Funds provides catalytic financing and ecosystem capacity across the 36 states and the Federal Capital Territory. We work directly with entrepreneurs and through fund managers, lenders, and ecosystem partners sharing our focus on job creation.
+                </p>
+
+                <div className="md:col-span-4 bg-white/90 backdrop-blur-sm p-5 rounded-2xl border border-[var(--color-evergreen)]/10 shadow-sm space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)]">
+                    <ShieldCheck className="w-4 h-4 text-[var(--color-mint-leaf)]" />
+                    <span>Initial Screening Policy</span>
+                  </div>
+                  <p className="text-xs text-[var(--color-evergreen)]/70 leading-relaxed font-medium">
+                    Takes ~5 minutes. Zero application fees. We never work through intermediaries who charge for access.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--color-evergreen)]/60 text-center mb-6">
-                Select the option that best describes you to proceed to the relevant form:
-              </h2>
+            {/* Concept.vc High-Contrast Interactive Cards Grid */}
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-evergreen)]/15">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block">
+                    Choose Your Path
+                  </span>
+                  <h2 className="font-[var(--font-asul)] text-2xl sm:text-3xl font-bold text-[var(--color-evergreen)]">
+                    Select your stakeholder group
+                  </h2>
+                </div>
+                <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-evergreen)]/50">
+                  06 Target Windows Available
+                </span>
+              </div>
 
+              {/* The 6 Concept.vc Style High-Contrast Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {STAKEHOLDER_GROUPS.map((group) => (
-                  <motion.div
-                    key={group.id}
-                    whileHover={{ y: -4, borderColor: "var(--color-tiger-orange)" }}
-                    transition={{ duration: 0.2 }}
-                    className="bg-white rounded-2xl p-7 border border-[var(--color-evergreen)]/10 shadow-[0_10px_30px_-10px_rgba(0,49,36,0.05)] flex flex-col justify-between cursor-pointer group"
-                    onClick={() => handleSelectGroup(group)}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-5">
-                        <div className="w-12 h-12 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          {getGroupIcon(group.formNumber)}
+                {STAKEHOLDER_GROUPS.map((group) => {
+                  const meta = STAKEHOLDER_META[group.formNumber];
+                  const isDark = meta.theme === "dark";
+
+                  return (
+                    <motion.div
+                      key={group.id}
+                      whileHover={{ y: -6, scale: 1.01 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      onClick={() => handleSelectGroup(group)}
+                      className={`group relative rounded-3xl p-8 md:p-9 cursor-pointer flex flex-col justify-between min-h-[380px] transition-all duration-300 ${
+                        isDark
+                          ? "bg-[var(--color-evergreen)] text-white border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,49,36,0.3)] hover:border-[var(--color-mint-leaf)]"
+                          : "bg-white text-[var(--color-evergreen)] border border-[var(--color-evergreen)]/15 shadow-[0_15px_35px_-10px_rgba(0,49,36,0.06)] hover:border-[var(--color-tiger-orange)]"
+                      }`}
+                    >
+                      {/* Top Row: Track Pill & Concept.vc Top-Right Diagonal Arrow */}
+                      <div>
+                        <div className="flex items-start justify-between gap-4 mb-8">
+                          <span
+                            className={`text-[11px] font-mono font-bold tracking-wider uppercase px-3 py-1.5 rounded-full ${
+                              isDark
+                                ? "bg-white/10 text-[var(--color-mint-leaf)]"
+                                : "bg-[var(--color-evergreen)]/5 text-[var(--color-tiger-orange)]"
+                            }`}
+                          >
+                            {meta.trackPill}
+                          </span>
+
+                          {/* The Distinctive Concept.vc Diagonal Arrow */}
+                          <div
+                            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                              isDark
+                                ? "bg-white/10 text-white group-hover:bg-[var(--color-mint-leaf)] group-hover:text-[var(--color-evergreen)]"
+                                : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] group-hover:bg-[var(--color-tiger-orange)] group-hover:text-white"
+                            }`}
+                          >
+                            <ArrowUpRight className="w-6 h-6 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                          </div>
                         </div>
-                        <span className="text-[11px] font-bold tracking-widest uppercase text-[var(--color-evergreen)]/40 group-hover:text-[var(--color-tiger-orange)] transition-colors">
-                          Form 0{group.formNumber}
-                        </span>
+
+                        {/* Title */}
+                        <h3
+                          className={`font-[var(--font-asul)] text-2xl sm:text-3xl font-bold tracking-tight mb-4 leading-snug ${
+                            isDark ? "text-white" : "text-[var(--color-evergreen)]"
+                          }`}
+                        >
+                          {group.name}
+                        </h3>
+
+                        {/* Description */}
+                        <p
+                          className={`text-sm leading-relaxed font-normal mb-8 ${
+                            isDark ? "text-white/80" : "text-[var(--color-evergreen)]/75"
+                          }`}
+                        >
+                          {meta.subheading}
+                        </p>
                       </div>
 
-                      <h3 className="font-[var(--font-asul)] text-xl font-bold text-[var(--color-evergreen)] mb-3 leading-snug">
-                        {group.name}
-                      </h3>
-                      <p className="text-xs text-[var(--color-evergreen)]/70 leading-relaxed mb-6 font-normal">
-                        {group.tagline}
-                      </p>
-                    </div>
+                      {/* Bottom Footer: Feature Badges & Apply Trigger */}
+                      <div className={`pt-6 border-t ${isDark ? "border-white/10" : "border-[var(--color-evergreen)]/10"}`}>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {meta.badges.map((badge) => (
+                            <span
+                              key={badge}
+                              className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-md ${
+                                isDark
+                                  ? "bg-white/5 text-white/70 border border-white/10"
+                                  : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)]/80 border border-[var(--color-evergreen)]/10"
+                              }`}
+                            >
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
 
-                    <div className="pt-4 border-t border-[var(--color-evergreen)]/10 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)] group-hover:text-[var(--color-tiger-orange)] transition-colors">
-                      <span>Start Application</span>
-                      <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
-                    </div>
-                  </motion.div>
-                ))}
+                        <div
+                          className={`flex items-center justify-between text-xs font-bold uppercase tracking-wider ${
+                            isDark
+                              ? "text-[var(--color-mint-leaf)] group-hover:text-white"
+                              : "text-[var(--color-evergreen)] group-hover:text-[var(--color-tiger-orange)]"
+                          } transition-colors`}
+                        >
+                          <span>Start Screening</span>
+                          <span className="font-mono text-sm">→</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
           </FadeIn>
         )}
 
-        {/* ---------------- STEP 1: SECTION A (CONTACT DETAILS) ---------------- */}
+        {/* ========================================================================= */}
+        {/* STEP 1: SECTION A (CONTACT DETAILS)                                       */}
+        {/* ========================================================================= */}
         {step === 1 && selectedGroup && (
           <FadeIn direction="up">
-            <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10">
-              <div className="mb-8 pb-6 border-b border-[var(--color-evergreen)]/10">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-1">
+            <div className="bg-white rounded-3xl p-8 sm:p-14 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10 max-w-4xl mx-auto">
+              <div className="mb-10 pb-6 border-b border-[var(--color-evergreen)]/10">
+                <span className="text-xs font-mono font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-2">
                   Section A • Common Intake
                 </span>
-                <h2 className="font-[var(--font-asul)] text-3xl font-bold text-[var(--color-evergreen)]">
+                <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)]">
                   Contact & Organisation Details
                 </h2>
-                <p className="text-xs sm:text-sm text-[var(--color-evergreen)]/70 mt-1">
-                  This information allows the YEIB screening team to authenticate and route your submission.
+                <p className="text-sm text-[var(--color-evergreen)]/70 mt-2">
+                  This baseline information allows the YEIB screening team to authenticate and route your submission across the appropriate window.
                 </p>
               </div>
 
@@ -389,7 +510,7 @@ export function ApplySection() {
                       value={contact.fullName}
                       onChange={(e) => setContact({ ...contact, fullName: e.target.value })}
                       placeholder="e.g. Amina Mohammed"
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                       required
                     />
                   </div>
@@ -403,7 +524,7 @@ export function ApplySection() {
                       value={contact.organizationName}
                       onChange={(e) => setContact({ ...contact, organizationName: e.target.value })}
                       placeholder="e.g. Sahel Ventures Ltd."
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                       required
                     />
                   </div>
@@ -419,7 +540,7 @@ export function ApplySection() {
                       value={contact.role}
                       onChange={(e) => setContact({ ...contact, role: e.target.value })}
                       placeholder="e.g. Managing Director / Founder"
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                       required
                     />
                   </div>
@@ -433,7 +554,7 @@ export function ApplySection() {
                       value={contact.email}
                       onChange={(e) => setContact({ ...contact, email: e.target.value })}
                       placeholder="contact@organisation.com"
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                       required
                     />
                   </div>
@@ -449,11 +570,11 @@ export function ApplySection() {
                       value={contact.phone}
                       onChange={(e) => setContact({ ...contact, phone: e.target.value })}
                       placeholder="+234 800 000 0000"
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                       required
                     />
                     <span className="text-[11px] text-[var(--color-evergreen)]/60 mt-1 block">
-                      Include the country code, for example +234.
+                      Include country code (e.g. +234).
                     </span>
                   </div>
 
@@ -464,7 +585,7 @@ export function ApplySection() {
                     <select
                       value={contact.state}
                       onChange={(e) => setContact({ ...contact, state: e.target.value })}
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                       required
                     >
                       <option value="">Select state or jurisdiction...</option>
@@ -487,7 +608,7 @@ export function ApplySection() {
                       value={contact.websiteOrLinkedIn}
                       onChange={(e) => setContact({ ...contact, websiteOrLinkedIn: e.target.value })}
                       placeholder="https://..."
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                     />
                   </div>
 
@@ -498,7 +619,7 @@ export function ApplySection() {
                     <select
                       value={contact.referralSource}
                       onChange={(e) => setContact({ ...contact, referralSource: e.target.value })}
-                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl"
+                      className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl"
                     >
                       <option value="">Select channel...</option>
                       <option value="Referral">Referral</option>
@@ -511,7 +632,7 @@ export function ApplySection() {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-[var(--color-evergreen)]/10 flex justify-end">
+                <div className="pt-8 border-t border-[var(--color-evergreen)]/10 flex justify-end">
                   <Button
                     type="button"
                     disabled={!canProceedFromSectionA()}
@@ -519,9 +640,9 @@ export function ApplySection() {
                       setStep(2);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2 disabled:opacity-40"
+                    className="bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-2xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2 disabled:opacity-40"
                   >
-                    <span>Proceed to Questionnaire</span>
+                    <span>Proceed to Screening Questions</span>
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -530,24 +651,29 @@ export function ApplySection() {
           </FadeIn>
         )}
 
-        {/* ---------------- STEP 2: SECTION B (FORM QUESTIONS) ---------------- */}
+        {/* ========================================================================= */}
+        {/* STEP 2: SECTION B (FORM SCREENING QUESTIONS)                              */}
+        {/* ========================================================================= */}
         {step === 2 && selectedGroup && (
           <FadeIn direction="up">
-            <div className="space-y-8">
-              {/* Stakeholder Policy Banner */}
-              <div className="bg-[var(--color-evergreen)] text-white rounded-2xl p-8 shadow-lg relative overflow-hidden">
+            <div className="space-y-8 max-w-4xl mx-auto">
+              {/* Concept VC Styled Group Briefing Banner */}
+              <div className="bg-[var(--color-evergreen)] text-white rounded-3xl p-8 sm:p-10 shadow-xl border border-white/10 relative overflow-hidden">
                 <div className="relative z-10">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-emerald)] block mb-2">
-                    Form 0{selectedGroup.formNumber} • {selectedGroup.name}
-                  </span>
-                  <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-normal">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[var(--color-mint-leaf)] text-xs font-mono font-bold uppercase tracking-wider mb-4">
+                    <span>Focus Overview • Form 0{selectedGroup.formNumber}</span>
+                  </div>
+                  <h3 className="font-[var(--font-asul)] text-2xl sm:text-3xl font-bold mb-3">
+                    {selectedGroup.name}
+                  </h3>
+                  <p className="text-sm text-white/85 leading-relaxed font-normal">
                     {selectedGroup.introCopy}
                   </p>
                 </div>
               </div>
 
-              {/* Dynamic Questions Form */}
-              <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10 space-y-8">
+              {/* Dynamic Questions Form Card */}
+              <div className="bg-white rounded-3xl p-8 sm:p-14 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10 space-y-10">
                 {FORMS_BY_NUMBER[selectedGroup.formNumber]?.map((q: FormQuestion) => {
                   // Check conditional display
                   if (q.condition && !q.condition(responses)) {
@@ -562,7 +688,7 @@ export function ApplySection() {
                       className="border-b border-[var(--color-evergreen)]/10 pb-8 last:border-b-0 last:pb-0"
                     >
                       <div className="mb-3">
-                        <label className="block text-sm font-bold text-[var(--color-evergreen)] leading-snug">
+                        <label className="block text-base font-bold text-[var(--color-evergreen)] leading-snug">
                           <span className="text-[var(--color-tiger-orange)] font-mono mr-2">{q.ref}</span>
                           {q.label} {q.required && <span className="text-[var(--color-tiger-orange)]">*</span>}
                         </label>
@@ -575,7 +701,7 @@ export function ApplySection() {
 
                       {/* 1. Single Select Options */}
                       {q.type === "select" && q.options && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                           {q.options.map((opt) => {
                             const isSelected = currentVal === opt;
                             return (
@@ -583,9 +709,9 @@ export function ApplySection() {
                                 key={opt}
                                 type="button"
                                 onClick={() => setResponses({ ...responses, [q.id]: opt })}
-                                className={`text-left p-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all ${
+                                className={`text-left p-4 rounded-2xl border text-sm font-medium transition-all ${
                                   isSelected
-                                    ? "bg-[var(--color-evergreen)] text-white border-[var(--color-evergreen)] shadow-sm"
+                                    ? "bg-[var(--color-evergreen)] text-white border-[var(--color-evergreen)] shadow-md"
                                     : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] border-[var(--color-evergreen)]/15 hover:border-[var(--color-tiger-orange)]"
                                 }`}
                               >
@@ -598,7 +724,7 @@ export function ApplySection() {
 
                       {/* 2. Multi-Select Options */}
                       {q.type === "multi-select" && q.options && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                           {q.options.map((opt) => {
                             const selectedList = Array.isArray(currentVal) ? currentVal : [];
                             const isSelected = selectedList.includes(opt);
@@ -619,14 +745,14 @@ export function ApplySection() {
                                   }
                                   setResponses({ ...responses, [q.id]: updated });
                                 }}
-                                className={`text-left p-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all flex items-start justify-between gap-2 ${
+                                className={`text-left p-4 rounded-2xl border text-sm font-medium transition-all flex items-start justify-between gap-3 ${
                                   isSelected
-                                    ? "bg-[var(--color-evergreen)] text-white border-[var(--color-evergreen)] shadow-sm"
+                                    ? "bg-[var(--color-evergreen)] text-white border-[var(--color-evergreen)] shadow-md"
                                     : "bg-[var(--color-mint-cream)] text-[var(--color-evergreen)] border-[var(--color-evergreen)]/15 hover:border-[var(--color-tiger-orange)]"
                                 }`}
                               >
                                 <span>{opt}</span>
-                                {isSelected && <Check className="w-4 h-4 shrink-0 text-[var(--color-emerald)]" />}
+                                {isSelected && <Check className="w-4 h-4 shrink-0 text-[var(--color-mint-leaf)] mt-0.5" />}
                               </button>
                             );
                           })}
@@ -640,7 +766,7 @@ export function ApplySection() {
                           value={(currentVal as string) || ""}
                           placeholder={q.placeholder || "Enter response..."}
                           onChange={(e) => setResponses({ ...responses, [q.id]: e.target.value })}
-                          className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl mt-2"
+                          className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl mt-3"
                         />
                       )}
 
@@ -649,7 +775,7 @@ export function ApplySection() {
                         <select
                           value={(currentVal as string) || ""}
                           onChange={(e) => setResponses({ ...responses, [q.id]: e.target.value })}
-                          className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl mt-2"
+                          className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl mt-3"
                         >
                           <option value="">Select option...</option>
                           {q.options.map((opt) => (
@@ -662,27 +788,27 @@ export function ApplySection() {
 
                       {/* 5. Textarea with live Word Counter */}
                       {q.type === "textarea" && (
-                        <div className="mt-2">
+                        <div className="mt-3">
                           <textarea
                             rows={4}
                             value={(currentVal as string) || ""}
                             placeholder={q.placeholder || "Provide concise details..."}
                             onChange={(e) => setResponses({ ...responses, [q.id]: e.target.value })}
-                            className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-3.5 text-sm focus:outline-none transition-colors rounded-xl resize-none"
+                            className="w-full bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/15 focus:border-[var(--color-tiger-orange)] p-4 text-sm focus:outline-none transition-colors rounded-2xl resize-none"
                           />
                           {q.maxWords && (
-                            <div className="flex justify-between items-center text-xs mt-1 px-1">
+                            <div className="flex justify-between items-center text-xs mt-2 px-1">
                               <span
-                                className={
+                                className={`font-mono ${
                                   countWords((currentVal as string) || "") > q.maxWords
                                     ? "text-red-600 font-bold"
                                     : "text-[var(--color-evergreen)]/60"
-                                }
+                                }`}
                               >
                                 {countWords((currentVal as string) || "")} / {q.maxWords} words max
                               </span>
                               {countWords((currentVal as string) || "") > q.maxWords && (
-                                <span className="text-red-600 text-xs">Exceeds limit</span>
+                                <span className="text-red-600 text-xs font-bold">Word limit exceeded</span>
                               )}
                             </div>
                           )}
@@ -691,22 +817,22 @@ export function ApplySection() {
 
                       {/* 6. Form 2 Dual Currency Component (2.6) */}
                       {q.type === "currency-dual" && (
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 bg-[var(--color-mint-cream)] p-4 rounded-xl border border-[var(--color-evergreen)]/15">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 bg-[var(--color-mint-cream)] p-5 rounded-2xl border border-[var(--color-evergreen)]/15">
                           <div>
-                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1.5">
                               Currency
                             </label>
                             <select
                               value={currencyForm2}
                               onChange={(e) => setCurrencyForm2(e.target.value as "₦" | "US$")}
-                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3.5 text-sm rounded-xl font-medium"
                             >
                               <option value="₦">Naira (₦)</option>
                               <option value="US$">US Dollar (US$)</option>
                             </select>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1.5">
                               Target Fund Size *
                             </label>
                             <input
@@ -714,11 +840,11 @@ export function ApplySection() {
                               value={targetSizeForm2}
                               onChange={(e) => setTargetSizeForm2(e.target.value)}
                               placeholder="e.g. 10,000,000,000"
-                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3.5 text-sm rounded-xl"
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1.5">
                               Committed to Date *
                             </label>
                             <input
@@ -726,7 +852,7 @@ export function ApplySection() {
                               value={committedForm2}
                               onChange={(e) => setCommittedForm2(e.target.value)}
                               placeholder="e.g. 3,500,000,000"
-                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3.5 text-sm rounded-xl"
                             />
                           </div>
                         </div>
@@ -734,15 +860,15 @@ export function ApplySection() {
 
                       {/* 7. Form 4 Two-Selects Component (4.7) */}
                       {q.type === "two-selects" && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3 bg-[var(--color-mint-cream)] p-4 rounded-xl border border-[var(--color-evergreen)]/15">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3 bg-[var(--color-mint-cream)] p-5 rounded-2xl border border-[var(--color-evergreen)]/15">
                           <div>
-                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1.5">
                               Youth-Led Share *
                             </label>
                             <select
                               value={youthLedShare}
                               onChange={(e) => setYouthLedShare(e.target.value)}
-                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3.5 text-sm rounded-xl font-medium"
                             >
                               <option value="">Select range...</option>
                               <option value="Below 25%">Below 25%</option>
@@ -752,13 +878,13 @@ export function ApplySection() {
                             </select>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1">
+                            <label className="block text-xs font-bold uppercase text-[var(--color-evergreen)]/70 mb-1.5">
                               Women-Led Share *
                             </label>
                             <select
                               value={womenLedShare}
                               onChange={(e) => setWomenLedShare(e.target.value)}
-                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3 text-sm rounded-lg"
+                              className="w-full bg-white border border-[var(--color-evergreen)]/20 p-3.5 text-sm rounded-xl font-medium"
                             >
                               <option value="">Select range...</option>
                               <option value="Below 25%">Below 25%</option>
@@ -772,10 +898,10 @@ export function ApplySection() {
 
                       {/* 8. PDF File Upload */}
                       {q.type === "file" && (
-                        <div className="mt-3 p-5 border-2 border-dashed border-[var(--color-evergreen)]/20 rounded-xl bg-[var(--color-mint-cream)] text-center">
+                        <div className="mt-3 p-6 border-2 border-dashed border-[var(--color-evergreen)]/20 rounded-2xl bg-[var(--color-mint-cream)] text-center">
                           <FileCheck className="w-8 h-8 text-[var(--color-evergreen)]/40 mx-auto mb-2" />
-                          <label className="inline-block cursor-pointer bg-white px-4 py-2 rounded-lg border border-[var(--color-evergreen)]/20 text-xs font-bold text-[var(--color-evergreen)] hover:border-[var(--color-tiger-orange)] transition-colors">
-                            <span>Choose PDF Document</span>
+                          <label className="inline-block cursor-pointer bg-white px-5 py-2.5 rounded-xl border border-[var(--color-evergreen)]/20 text-xs font-bold uppercase tracking-wider text-[var(--color-evergreen)] hover:border-[var(--color-tiger-orange)] transition-colors shadow-sm">
+                            <span>Select PDF File</span>
                             <input
                               type="file"
                               accept="application/pdf"
@@ -787,13 +913,16 @@ export function ApplySection() {
                                     alert("File exceeds maximum limit of 10 MB.");
                                     return;
                                   }
-                                  setResponses({ ...responses, [q.id]: `Attached: ${file.name} (${Math.round(file.size / 1024)} KB)` });
+                                  setResponses({
+                                    ...responses,
+                                    [q.id]: `Attached: ${file.name} (${Math.round(file.size / 1024)} KB)`,
+                                  });
                                 }
                               }}
                             />
                           </label>
-                          <span className="block text-xs text-[var(--color-evergreen)]/60 mt-2">
-                            {(currentVal as string) || "PDF format only, maximum size 10 MB (Optional)."}
+                          <span className="block text-xs text-[var(--color-evergreen)]/60 mt-2 font-mono">
+                            {(currentVal as string) || "PDF only • 10 MB limit • Optional"}
                           </span>
                         </div>
                       )}
@@ -801,7 +930,7 @@ export function ApplySection() {
                   );
                 })}
 
-                <div className="pt-6 border-t border-[var(--color-evergreen)]/10 flex justify-between items-center">
+                <div className="pt-8 border-t border-[var(--color-evergreen)]/10 flex justify-between items-center">
                   <Button
                     type="button"
                     variant="secondary"
@@ -809,7 +938,7 @@ export function ApplySection() {
                       setStep(1);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-xl py-3 px-6 text-xs font-bold uppercase tracking-widest"
+                    className="bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-2xl py-3 px-6 text-xs font-bold uppercase tracking-widest"
                   >
                     Back to Section A
                   </Button>
@@ -821,7 +950,7 @@ export function ApplySection() {
                       setStep(3);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2 disabled:opacity-40"
+                    className="bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-2xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2 disabled:opacity-40"
                   >
                     <span>Proceed to Declarations</span>
                     <ArrowRight className="w-4 h-4" />
@@ -832,36 +961,38 @@ export function ApplySection() {
           </FadeIn>
         )}
 
-        {/* ---------------- STEP 3: SECTION C (DECLARATIONS & CONSENT) ---------------- */}
+        {/* ========================================================================= */}
+        {/* STEP 3: SECTION C (DECLARATIONS & CONSENT)                                 */}
+        {/* ========================================================================= */}
         {step === 3 && selectedGroup && (
           <FadeIn direction="up">
-            <form onSubmit={handleSubmitFinal}>
+            <form onSubmit={handleSubmitFinal} className="max-w-4xl mx-auto">
               {/* Anti-spam honeypot */}
               <input type="text" name="honeypot" className="hidden" tabIndex={-1} autoComplete="off" />
 
-              <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10">
-                <div className="mb-8 pb-6 border-b border-[var(--color-evergreen)]/10">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-1">
-                    Section C • Final Review
+              <div className="bg-white rounded-3xl p-8 sm:p-14 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)] border border-[var(--color-evergreen)]/10">
+                <div className="mb-10 pb-6 border-b border-[var(--color-evergreen)]/10">
+                  <span className="text-xs font-mono font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-2">
+                    Section C • Final Consent
                   </span>
-                  <h2 className="font-[var(--font-asul)] text-3xl font-bold text-[var(--color-evergreen)]">
-                    Declarations & Legal Consent
+                  <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)]">
+                    Declarations & Legal Acknowledgements
                   </h2>
-                  <p className="text-xs sm:text-sm text-[var(--color-evergreen)]/70 mt-1">
-                    Please review the statutory declarations under the Nigeria Data Protection Act (NDPA 2023).
+                  <p className="text-sm text-[var(--color-evergreen)]/70 mt-2">
+                    Please confirm the statutory declarations under the Nigeria Data Protection Act (NDPA 2023) to finalize your submission.
                   </p>
                 </div>
 
                 {status === "error" && (
-                  <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-3 text-xs sm:text-sm">
+                  <div className="mb-8 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-3 text-xs sm:text-sm">
                     <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                     <span>{errorMessage || "Submission error. Please ensure all declarations are checked."}</span>
                   </div>
                 )}
 
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {/* C.1 */}
-                  <label className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
+                  <label className="flex items-start gap-4 p-5 rounded-2xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
                     <input
                       type="checkbox"
                       checked={declarations.accuracyConfirmed}
@@ -872,13 +1003,13 @@ export function ApplySection() {
                       required
                     />
                     <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
-                      <strong className="font-semibold block mb-0.5">C.1 Accuracy Declaration *</strong>
+                      <strong className="font-bold block mb-1">C.1 Accuracy Declaration *</strong>
                       I confirm that the information I have provided is accurate and complete to the best of my knowledge.
                     </div>
                   </label>
 
                   {/* C.2 */}
-                  <label className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
+                  <label className="flex items-start gap-4 p-5 rounded-2xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
                     <input
                       type="checkbox"
                       checked={declarations.nonBindingAcknowledged}
@@ -889,13 +1020,13 @@ export function ApplySection() {
                       required
                     />
                     <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
-                      <strong className="font-semibold block mb-0.5">C.2 Non-Binding Submission *</strong>
+                      <strong className="font-bold block mb-1">C.2 Non-Binding Submission *</strong>
                       I understand that this submission is not an application for, or an offer of, financing, and that Nigeria YEIB Investment Funds is under no obligation to proceed.
                     </div>
                   </label>
 
                   {/* C.3 */}
-                  <label className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
+                  <label className="flex items-start gap-4 p-5 rounded-2xl bg-[var(--color-mint-cream)] border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/30 transition-colors">
                     <input
                       type="checkbox"
                       checked={declarations.privacyConsent}
@@ -906,7 +1037,7 @@ export function ApplySection() {
                       required
                     />
                     <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
-                      <strong className="font-semibold block mb-0.5">C.3 NDPA 2023 Data Protection Consent *</strong>
+                      <strong className="font-bold block mb-1">C.3 NDPA 2023 Data Protection Consent *</strong>
                       I consent to Nigeria YEIB Investment Funds processing the personal data in this form in accordance with the Nigeria Data Protection Act 2023 and its{" "}
                       <button
                         type="button"
@@ -924,7 +1055,7 @@ export function ApplySection() {
 
                   {/* C.4 Conditional on Form 1 Equity */}
                   {isForm1Equity() && (
-                    <label className="flex items-start gap-3 p-4 rounded-xl bg-orange-50/50 border border-[var(--color-tiger-orange)]/30 cursor-pointer hover:border-[var(--color-tiger-orange)] transition-colors">
+                    <label className="flex items-start gap-4 p-5 rounded-2xl bg-orange-50/60 border border-[var(--color-tiger-orange)]/30 cursor-pointer hover:border-[var(--color-tiger-orange)] transition-colors">
                       <input
                         type="checkbox"
                         checked={declarations.exclusionListConfirmed}
@@ -935,7 +1066,7 @@ export function ApplySection() {
                         required
                       />
                       <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
-                        <strong className="font-semibold block mb-0.5 text-[var(--color-tiger-orange)]">
+                        <strong className="font-bold block mb-1 text-[var(--color-tiger-orange)]">
                           C.4 YEIB Exclusion List Compliance *
                         </strong>
                         I confirm that my business is not engaged in any activity on the{" "}
@@ -955,7 +1086,7 @@ export function ApplySection() {
                   )}
 
                   {/* C.5 Optional */}
-                  <label className="flex items-start gap-3 p-4 rounded-xl bg-white border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/20 transition-colors">
+                  <label className="flex items-start gap-4 p-5 rounded-2xl bg-white border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/20 transition-colors">
                     <input
                       type="checkbox"
                       checked={declarations.shareWithPartnersConsent}
@@ -965,7 +1096,7 @@ export function ApplySection() {
                       className="mt-1 w-4 h-4 accent-[var(--color-evergreen)] rounded"
                     />
                     <div className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 leading-relaxed">
-                      <strong className="font-semibold block mb-0.5 text-[var(--color-evergreen)]">
+                      <strong className="font-bold block mb-1 text-[var(--color-evergreen)]">
                         C.5 Partner Sharing (Optional)
                       </strong>
                       I agree that my submission may be shared, where relevant, with partner fund managers, participating lenders, Impact Credit Guarantee Limited or vetted service providers, so that I can be considered for their support.
@@ -973,7 +1104,7 @@ export function ApplySection() {
                   </label>
 
                   {/* C.6 Optional */}
-                  <label className="flex items-start gap-3 p-4 rounded-xl bg-white border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/20 transition-colors">
+                  <label className="flex items-start gap-4 p-5 rounded-2xl bg-white border border-[var(--color-evergreen)]/10 cursor-pointer hover:border-[var(--color-evergreen)]/20 transition-colors">
                     <input
                       type="checkbox"
                       checked={declarations.receiveUpdatesConsent}
@@ -983,7 +1114,7 @@ export function ApplySection() {
                       className="mt-1 w-4 h-4 accent-[var(--color-evergreen)] rounded"
                     />
                     <div className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 leading-relaxed">
-                      <strong className="font-semibold block mb-0.5 text-[var(--color-evergreen)]">
+                      <strong className="font-bold block mb-1 text-[var(--color-evergreen)]">
                         C.6 Communications (Optional)
                       </strong>
                       I would like to receive programmatic updates and notifications from Nigeria YEIB Investment Funds.
@@ -991,7 +1122,7 @@ export function ApplySection() {
                   </label>
                 </div>
 
-                <div className="pt-8 border-t border-[var(--color-evergreen)]/10 flex justify-between items-center mt-8">
+                <div className="pt-10 border-t border-[var(--color-evergreen)]/10 flex justify-between items-center mt-10">
                   <Button
                     type="button"
                     variant="secondary"
@@ -999,7 +1130,7 @@ export function ApplySection() {
                       setStep(2);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-xl py-3 px-6 text-xs font-bold uppercase tracking-widest"
+                    className="bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-2xl py-3 px-6 text-xs font-bold uppercase tracking-widest"
                   >
                     Back to Questions
                   </Button>
@@ -1007,7 +1138,7 @@ export function ApplySection() {
                   <Button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="bg-[var(--color-tiger-orange)] hover:bg-orange-600 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest flex items-center gap-2"
+                    className="bg-[var(--color-tiger-orange)] hover:bg-orange-600 text-white rounded-2xl py-4 px-9 text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg"
                   >
                     {status === "submitting" ? (
                       <>
@@ -1027,28 +1158,30 @@ export function ApplySection() {
           </FadeIn>
         )}
 
-        {/* ---------------- STEP 4: CONFIRMATION & REFERENCE ---------------- */}
+        {/* ========================================================================= */}
+        {/* STEP 4: CONFIRMATION & REFERENCE NUMBER CARD                              */}
+        {/* ========================================================================= */}
         {step === 4 && (
           <FadeIn direction="up">
-            <div className="bg-white rounded-2xl p-8 sm:p-14 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.08)] border border-[var(--color-evergreen)]/10 max-w-2xl mx-auto text-center">
-              <div className="w-16 h-16 rounded-full bg-[var(--color-mint-cream)] border-2 border-[var(--color-emerald)] flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-8 h-8 text-[var(--color-emerald)]" />
+            <div className="bg-white rounded-3xl p-8 sm:p-14 shadow-[0_20px_50px_-15px_rgba(0,49,36,0.08)] border border-[var(--color-evergreen)]/10 max-w-2xl mx-auto text-center">
+              <div className="w-20 h-20 rounded-full bg-[var(--color-mint-cream)] border-2 border-[var(--color-mint-leaf)] flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-10 h-10 text-[var(--color-mint-leaf)]" />
               </div>
 
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-emerald)] block mb-2">
-                Submission Received
+              <span className="text-xs font-mono font-bold uppercase tracking-widest text-[var(--color-mint-leaf)] block mb-2">
+                Submission Successfully Registered
               </span>
               <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)] mb-4">
                 Thank you for applying.
               </h2>
-              <p className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 leading-relaxed max-w-lg mx-auto mb-8">
+              <p className="text-sm text-[var(--color-evergreen)]/80 leading-relaxed max-w-lg mx-auto mb-8">
                 Your initial screening response has been logged into the Nigeria YEIB Investment Funds evaluation pipeline.
               </p>
 
-              {/* Reference ID Card */}
-              <div className="bg-[var(--color-evergreen)] text-white p-6 rounded-2xl mb-8 relative">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-emerald)] block mb-1">
-                  Your Application Reference Code
+              {/* High-Impact Fintech Reference Code Card */}
+              <div className="bg-[var(--color-evergreen)] text-white p-7 rounded-3xl mb-8 relative border border-white/10 shadow-xl">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-[var(--color-mint-leaf)] block mb-2">
+                  Official Application Reference Code
                 </span>
                 <div className="flex items-center justify-center gap-3 my-2">
                   <span className="font-mono text-2xl sm:text-3xl font-bold tracking-wider text-white">
@@ -1057,29 +1190,29 @@ export function ApplySection() {
                   <button
                     type="button"
                     onClick={handleCopyReference}
-                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white/80 hover:text-white"
+                    className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white/80 hover:text-white"
                     title="Copy Reference Number"
                   >
-                    {copiedRef ? <Check size={18} className="text-[var(--color-emerald)]" /> : <Copy size={18} />}
+                    {copiedRef ? <Check size={18} className="text-[var(--color-mint-leaf)]" /> : <Copy size={18} />}
                   </button>
                 </div>
-                <p className="text-[11px] text-[#E1C9B3] mt-2">
-                  Please quote this reference number in any correspondence with the Fund.
+                <p className="text-xs text-[#E1C9B3] mt-2">
+                  Please quote this reference in any future correspondence with the Fund.
                 </p>
               </div>
 
-              {/* Next steps notice */}
-              <div className="text-left bg-[var(--color-mint-cream)] p-5 rounded-xl border border-[var(--color-evergreen)]/10 text-xs sm:text-sm text-[var(--color-evergreen)] space-y-3 mb-8">
-                <div className="flex items-start gap-2.5">
-                  <Info className="w-4 h-4 text-[var(--color-evergreen)] shrink-0 mt-0.5" />
+              {/* Next Steps & Anti-Fraud Notice */}
+              <div className="text-left bg-[var(--color-mint-cream)] p-6 rounded-2xl border border-[var(--color-evergreen)]/10 text-xs sm:text-sm text-[var(--color-evergreen)] space-y-4 mb-8">
+                <div className="flex items-start gap-3">
+                  <Info className="w-5 h-5 text-[var(--color-evergreen)] shrink-0 mt-0.5" />
                   <p className="leading-relaxed">
-                    We review submissions on a rolling basis and aim to respond within <strong>5 to 10 working days</strong>. If your submission proceeds past initial screening, we will contact you to request further information and documentation.
+                    Submissions are appraised on a rolling basis. Our investment and capacity team aims to respond within <strong>5 to 10 working days</strong>. If your submission proceeds past initial screening, we will request formal documentation.
                   </p>
                 </div>
 
-                <div className="border-t border-[var(--color-evergreen)]/10 pt-3">
+                <div className="border-t border-[var(--color-evergreen)]/10 pt-4">
                   <p className="text-xs text-[var(--color-tiger-orange)] font-semibold leading-relaxed">
-                    <strong>Important Anti-Fraud Notice:</strong> Nigeria YEIB Investment Funds never charges a fee to apply and does not work through agents who charge for access. If anyone asks you for payment in our name, report it immediately to <strong>fraud-report@yeib-manco.com.ng</strong>.
+                    <strong>Notice:</strong> Nigeria YEIB Investment Funds never charges a fee to apply and does not work through agents who charge for access. Report any payment solicitation to <strong>fraud-report@yeib-manco.com.ng</strong>.
                   </p>
                 </div>
               </div>
@@ -1103,14 +1236,14 @@ export function ApplySection() {
                     setStatus("idle");
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
-                  className="w-full sm:w-auto bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest"
+                  className="w-full sm:w-auto bg-transparent border border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)] rounded-2xl py-4 px-8 text-xs font-bold uppercase tracking-widest"
                 >
-                  Submit Another Stakeholder Inquiry
+                  Submit Another Inquiry
                 </Button>
                 <Button
                   type="button"
                   onClick={() => router.push("/")}
-                  className="w-full sm:w-auto bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-xl py-4 px-8 text-xs font-bold uppercase tracking-widest"
+                  className="w-full sm:w-auto bg-[var(--color-evergreen)] hover:bg-[var(--color-evergreen)]/90 text-white rounded-2xl py-4 px-8 text-xs font-bold uppercase tracking-widest"
                 >
                   Return to Home
                 </Button>
@@ -1123,10 +1256,10 @@ export function ApplySection() {
       {/* Modal: NDPA 2023 Privacy Notice */}
       {showPrivacyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-evergreen)]/90 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-8 max-h-[85vh] overflow-y-auto relative shadow-2xl">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-8 max-h-[85vh] overflow-y-auto relative shadow-2xl">
             <button
               onClick={() => setShowPrivacyModal(false)}
-              className="absolute top-5 right-5 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-black transition-colors"
+              className="absolute top-5 right-5 p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-black transition-colors"
             >
               <X size={20} />
             </button>
@@ -1148,7 +1281,7 @@ export function ApplySection() {
               <Button
                 type="button"
                 onClick={() => setShowPrivacyModal(false)}
-                className="bg-[var(--color-evergreen)] text-white text-xs uppercase tracking-wider py-2.5 px-6 rounded-xl"
+                className="bg-[var(--color-evergreen)] text-white text-xs uppercase tracking-wider py-3 px-6 rounded-xl"
               >
                 Understood
               </Button>
@@ -1160,10 +1293,10 @@ export function ApplySection() {
       {/* Modal: YEIB Exclusion List */}
       {showExclusionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-evergreen)]/90 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-8 max-h-[85vh] overflow-y-auto relative shadow-2xl">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-8 max-h-[85vh] overflow-y-auto relative shadow-2xl">
             <button
               onClick={() => setShowExclusionModal(false)}
-              className="absolute top-5 right-5 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-black transition-colors"
+              className="absolute top-5 right-5 p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-black transition-colors"
             >
               <X size={20} />
             </button>
@@ -1186,7 +1319,7 @@ export function ApplySection() {
               <Button
                 type="button"
                 onClick={() => setShowExclusionModal(false)}
-                className="bg-[var(--color-evergreen)] text-white text-xs uppercase tracking-wider py-2.5 px-6 rounded-xl"
+                className="bg-[var(--color-evergreen)] text-white text-xs uppercase tracking-wider py-3 px-6 rounded-xl"
               >
                 Close Notice
               </Button>
