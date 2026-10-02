@@ -1,8 +1,6 @@
 import { AboutHero } from "@/features/about/components/AboutHero";
 import { TheChallenge } from "@/features/about/components/TheChallenge";
-import { OurApproach } from "@/features/about/components/OurApproach";
 import { TransparencyFramework } from "@/features/about/components/TransparencyFramework";
-import { Governance } from "@/features/about/components/Governance";
 import { SweetSpot } from "@/features/about/components/SweetSpot";
 import { EcosystemVehicles } from "@/features/about/components/EcosystemVehicles";
 import { StructureDiagram } from "@/features/about/components/StructureDiagram";
@@ -18,9 +16,7 @@ export default function AboutPage() {
     <div className="flex flex-col min-h-screen">
       <AboutHero />
       <TheChallenge />
-      <OurApproach />
       <SweetSpot />
-      <Governance />
       <StructureDiagram />
       <EcosystemVehicles />
       <TransparencyFramework />
