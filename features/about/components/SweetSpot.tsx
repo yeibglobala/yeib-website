@@ -17,7 +17,7 @@ export function SweetSpot() {
     },
     {
       title: "Permanent Vehicle",
-      desc: "A 20-year lifecycle designed for long-term sustainability vs. one-off programs."
+      desc: "A 20-year lifecycle designed for long-term sustainability."
     }
   ];
 
