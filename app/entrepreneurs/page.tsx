@@ -11,7 +11,7 @@ import { SectorOpportunity } from "@/features/entrepreneurs/components/SectorOpp
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
 
 export const metadata: Metadata = {
-  title: "Who We Serve | N-YEIB",
+  title: "Who We Serve | YEIB Investment Fund",
   description: "Flexible growth capital, credit guarantees, and technical assistance tailored to Nigerian youth-led and women-led MSMEs.",
 };
 

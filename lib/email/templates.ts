@@ -150,7 +150,7 @@ export function buildConfirmationEmailHtml(
           <tr>
             <td style="background-color: #003124; padding: 28px 32px; text-align: left;">
               <h1 style="color: #00BE93; font-size: 20px; margin: 0 0 6px 0; font-weight: 700;">
-                Nigeria YEIB Investment Funds
+                YEIB Investment Fund
               </h1>
               <p style="color: #E1C9B3; margin: 0; font-size: 13px;">
                 The institutional bridge between capital and ambition
@@ -182,7 +182,7 @@ export function buildConfirmationEmailHtml(
 
               <div style="background-color: #FFF9F2; border-left: 4px solid #F88404; padding: 14px 16px; margin-bottom: 24px; border-radius: 4px;">
                 <p style="margin: 0; font-size: 12px; color: #8C4400; line-height: 1.5;">
-                  <strong>Important Notice:</strong> Nigeria YEIB Investment Funds never charges a fee to apply and does not work through agents or intermediaries who charge for access. If anyone asks you for payment in our name, please report it immediately to <strong>fraud-report@yeib-manco.com.ng</strong>.
+                  <strong>Important Notice:</strong> The YEIB Investment Fund never charges a fee to apply and does not work through agents or intermediaries who charge for access. If anyone asks you for payment in our name, please report it immediately to <strong>fraud-report@yeib-manco.com.ng</strong>.
                 </p>
               </div>
 
@@ -195,7 +195,7 @@ export function buildConfirmationEmailHtml(
           <!-- Footer -->
           <tr>
             <td style="background-color: #F2FBF6; border-top: 1px solid #E1C9B3; padding: 20px 32px; text-align: center; font-size: 12px; color: #666666;">
-              <p style="margin: 0 0 4px 0;"><strong>Nigeria Youth Entrepreneurship Investment Fund (N-YEIB)</strong></p>
+              <p style="margin: 0 0 4px 0;"><strong>YEIB Investment Fund</strong></p>
               <p style="margin: 0 0 4px 0; color: #888888;">Anchored by the African Development Bank (AfDB)</p>
               <p style="margin: 0; color: #999999;">Abuja, Nigeria</p>
             </td>
@@ -216,7 +216,7 @@ export function buildConfirmationEmailText(
   referenceNumber?: string
 ): string {
   const refText = referenceNumber ? `\nApplication Reference Code: ${referenceNumber}\n` : "";
-  return `Hello ${recipientName},\n\n${introText}\n${refText}\nWhat happens next?\nWe review submissions on a rolling basis and aim to respond within 5 to 10 working days. If your submission proceeds, we will contact you to request further documentation.\n\nImportant Notice:\nNigeria YEIB Investment Funds never charges a fee to apply and does not work through agents who charge for access. Report any payment solicitation to fraud-report@yeib-manco.com.ng.\n\n--\nNigeria YEIB Investment Funds\nAnchored by AfDB\nAbuja, Nigeria`;
+  return `Hello ${recipientName},\n\n${introText}\n${refText}\nWhat happens next?\nWe review submissions on a rolling basis and aim to respond within 5 to 10 working days. If your submission proceeds, we will contact you to request further documentation.\n\nImportant Notice:\nThe YEIB Investment Fund never charges a fee to apply and does not work through agents who charge for access. Report any payment solicitation to fraud-report@yeib-manco.com.ng.\n\n--\nYEIB Investment Fund\nAnchored by AfDB\nAbuja, Nigeria`;
 }
 
 function escapeHtml(text: string): string {

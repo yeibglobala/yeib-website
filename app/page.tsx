@@ -7,7 +7,7 @@ import { EligibilitySection } from "@/features/home/components/EligibilitySectio
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
 
 export const metadata: Metadata = {
-  title: "N-YEIB | Nigeria Youth Entrepreneurship Investment Fund",
+  title: "YEIB Investment Fund | Funding the dreams of young people & women",
   description: "The institutional bridge between capital and ambition, empowering youth-led and women-led MSMEs across Nigeria.",
 };
 

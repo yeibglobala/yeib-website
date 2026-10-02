@@ -7,7 +7,7 @@ import { InstitutionalPartners } from "@/features/investors/components/Instituti
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
 
 export const metadata: Metadata = {
-  title: "Partners & Investors | N-YEIB",
+  title: "Partners & Investors | YEIB Investment Fund",
   description: "Co-invest with AfDB, sovereign funds, and institutional partners deploying patient capital and catalytic first-loss guarantees.",
 };
 

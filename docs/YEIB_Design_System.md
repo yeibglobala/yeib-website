@@ -1,14 +1,23 @@
-# YEIB Investment Fund — Design System v2.0
+# YEIB Investment Fund — Design System v2.1
+
+> **v2.1 note:** Sections 3, 4, 5 and 6 now describe the website as built. Where the code and an earlier version of this doc differed, the code wins.
+
+## 0. Naming
+
+- Always write **YEIB Investment Fund** in full for page titles, first mentions, legal text and emails. **YEIB** alone is fine after that.
+- YEIB is a **fund, never a bank**. Never call it a bank in copy, metadata, alt text or emails; this is a regulatory requirement (CBN), not a style choice.
+- Don't write "N-YEIB", "Nigeria YEIB Investment Funds", "YEIB Fund", or the plural "Investment Funds".
+- Page titles follow `<Page name> | YEIB Investment Fund`.
 
 ## 1. Visual Theme & Atmosphere
 
 YEIB's website radiates institutional authority blended with modern approachability. The entire page sits on a pale, mint-tinted background (`#F2FBF6`) that separates it from standard white finance sites. This deliberate choice creates a fresh, forward-looking feel, suited for a fund targeting youth and women-led MSMEs. The deep evergreen text (`#003124`) against this mint cream creates a high contrast ratio (13.59) that guarantees sharp readability while feeling natural and grounded.
 
-The typography pairing is the system's secret weapon. Asul provides institutional weight and authority for display text, featuring elegant serifs and a confident presence. Chivo handles the body copy with crisp, modern sans-serif clarity, while General Sans adds a punchy, technical feel to metadata and tags. 
+The typography pairing is the system's secret weapon. Asul provides institutional weight and authority for display text, featuring elegant serifs and a confident presence. Chivo handles everything else: body copy, metadata and tags.
 
 **Key Characteristics:**
 - Fresh Mint Cream background (`#F2FBF6`) — a deliberate base that feels optimistic and clean.
-- Typographic tension between authoritative Asul and hardworking Chivo/General Sans.
+- Typographic tension between authoritative Asul and hardworking Chivo.
 - Deep, grounded Evergreen (`#003124`) anchoring the visual weight.
 - Strategic flashes of Mint Leaf (`#00BE93`) for action and Tiger Orange (`#F88404`) for urgency.
 - Clean, banded outcome blocks that prioritize proof over promises.
@@ -28,6 +37,7 @@ The typography pairing is the system's secret weapon. Asul provides institutiona
 **Every field has one job. No colour does two.**
 - **Dark Fields**: Evergreen background carries Mint Leaf for figures and role lines, Pale Oak for rules/labels, and Mint Cream for body type.
 - **Light Fields**: Mint Cream and white take Evergreen as the primary and only ink. Mint Leaf and Tiger Orange appear here as fields, marks, and fills, never as type.
+- **Exception, as built**: Section eyebrows on light fields use Tiger Orange text (short, bold, small caps-style labels only).
 - **Tiger Orange Rules**: A field rather than an ink. Takes Evergreen type (or white in immaterial contexts). Never used for core institutional messaging.
 
 ## 3. Typography Rules
@@ -35,7 +45,7 @@ The typography pairing is the system's secret weapon. Asul provides institutiona
 ### Font Families
 - **Primary Display (Asul)**: 700 weight. For headings and high-impact statements.
 - **Primary Body (Chivo)**: 400, 500 weights. For standard reading and lead paragraphs.
-- **Utility (General Sans)**: 600 weight. For eyebrows, tags, and small utility text.
+- **Utility (Chivo)**: 600–700 weight. For eyebrows, tags, and small utility text. (General Sans was dropped; the `--font-general-sans` token now points to Chivo.)
 
 ### Hierarchy
 
@@ -48,63 +58,62 @@ The typography pairing is the system's secret weapon. Asul provides institutiona
 | Lead Body | Chivo | 19px (1.18rem)| 400 | normal |
 | Standard Body | Chivo | 16px (1.00rem)| 400 | normal |
 | Small Text | Chivo | 14px (0.87rem)| 500 | normal |
-| Eyebrow/Tags | General Sans | 12px (0.75rem)| 600 | +14% tracking |
+| Eyebrow/Tags | Chivo | 12–14px (`text-xs`/`text-sm`)| 600–700 | wide (`tracking-widest`) |
 
 ### Principles
-- **Asul carries authority. General Sans does the work.** The serif brings the institutional trust; the sans-serifs bring the modern operational efficiency.
+- **Asul carries authority. Chivo does the work.** The serif brings the institutional trust; the sans-serif brings the modern operational efficiency.
 - **No bold body text**: Use Medium (500) for emphasis in body copy, reserving heavy weights for Asul headings.
-- **Eyebrow spacing**: Always apply wide tracking (+14%) to uppercase General Sans eyebrows for premium editorial feel.
+- **Eyebrows**: On the site, section eyebrows are Tiger Orange Chivo, `text-xs font-bold tracking-widest`, e.g. `text-[var(--color-tiger-orange)] text-xs font-bold tracking-widest`.
 
 ## 4. Component Stylings
 
-### Buttons
-**Primary Dark**
-- Background: `#003124` (Evergreen)
-- Text: `#F2FBF6` (Mint Cream)
-- Radius: Standard (e.g., 6px or 8px)
-- Use: Main Call to Action ("Apply for funding")
+Shared primitives live in `components/ui/`. Use them before writing new markup.
 
-**Ghost / Outline**
-- Background: Transparent
-- Text: `#003124` (Evergreen)
-- Border: `1px solid #003124`
-- Use: Secondary actions ("Read our approach")
+### Buttons (`Button`)
+All buttons are **pills** (`rounded-full`) with a hover lift (`hover:-translate-y-1 hover:shadow-lg`), press feedback (`active:scale-95`) and a Tiger Orange focus ring.
 
-**Text Link**
-- Text: `#00BE93` (Mint Leaf)
-- Decoration: Arrow suffix ("See the evidence →")
+**Primary**: Evergreen background, Mint Cream text. Main call to action ("Apply for funding").
 
-### Tags & Pills
-- **Standard Tag**: Mint Cream fill, Evergreen text.
-- **Alert Tag**: Tiger Orange fill/text.
-- **Success Tag**: Mint Leaf fill/text.
+**Secondary (outline)**: transparent, `border-2` Evergreen, Evergreen text, fills Evergreen on hover.
 
-### Cards & Containers
-- Background: Mint Cream (`#F2FBF6`) or White.
-- Text: Evergreen.
-- Distinctive Component: The **Stat Block**. A dark Evergreen banded card used to display verified outcome metrics, with Mint Leaf dots for verification status.
+**Link**: Mint Leaf text, underline on hover, often with an arrow suffix ("See the evidence →").
+
+Sizes: `sm` (h-9), `default` (h-12), `lg` (h-14).
+
+### Tags & Pills (`Tag`)
+Pills (`rounded-full`). Variants: `youth` (Mint Cream fill, Evergreen text), `solid` (Evergreen fill, white text), `soft` (pale mint fill, green text), `series` (Tiger Orange uppercase text, no fill), `verified` (Mint Leaf text).
+
+### Cards (`Card`)
+- Mint Cream or white background, thin Pale Oak border, Evergreen text.
+- Corners: `rounded-2xl` is the default for cards and panels on the site; `rounded-xl` for smaller cards and inputs; `rounded-3xl` for large feature panels and images. `Card` itself is `rounded-lg`.
+- Soft shadow (`shadow-sm`), lifting on hover (`hover:-translate-y-1 hover:shadow-md`).
+
+### Stat Block (`CardStatBlock`)
+- A **white** card with a faint Pale Oak border, `rounded-lg`, `shadow-sm` and a hover lift.
+- Large Asul figure animated with `CountUp`, a short label, and an optional `VerifiedBadge` source line under a Pale Oak rule.
+- Stat blocks sit on light sections. Dark **Evergreen** is used for full-width section bands (hero, CTA, footer and feature bands), not for individual stat cards.
 
 ## 5. Layout Principles
 
 ### Spacing System
-- Base unit: 8px.
-- Use generous padding (80px–120px) between major sections to allow the Mint Cream background to breathe.
-- Tight internal spacing (16px–24px) within stat cards to group related metrics closely.
+- Base unit: 8px (Tailwind spacing scale).
+- Major sections use `py-24` as standard and `py-32` for emphasis (`py-16` for tighter bands).
+- Tight internal spacing (16px–24px) within cards to group related content.
 
 ### Grid & Container
-- Max content width: 1200px.
-- Centered containers.
-- Feature sections often use 2-3 column grids for stats and pillars.
+- Content containers are `max-w-6xl` (1152px) as standard; `max-w-7xl` (1280px) for wide sections. Centered with `mx-auto` and horizontal padding.
+- Feature sections often use 2–3 column grids for stats and pillars.
 
 ## 6. Depth & Elevation
 
 | Level | Treatment | Use |
 |-------|-----------|-----|
-| Flat (Level 0) | No shadow, solid fill | Standard page surface, text |
-| Bordered (Level 1) | Subtle border (Pale Oak) | Dividers, subtle cards |
-| Stat Block (Level 2)| Evergreen background | High-contrast visual anchor |
+| Flat (Level 0) | No shadow, solid fill | Page surface, text, Evergreen section bands |
+| Resting (Level 1) | Pale Oak border + `shadow-sm` | Cards, stat blocks, form panels |
+| Raised (Level 2) | `shadow-md`/`shadow-lg`, often with a hover lift | Hovered cards and buttons |
+| Floating (Level 3) | `shadow-xl`/`shadow-2xl` or a soft custom Evergreen-tinted shadow, e.g. `shadow-[0_20px_50px_-15px_rgba(0,49,36,0.06)]` | Hero images, large feature panels, modals |
 
-**Shadow Philosophy**: YEIB relies on high color contrast (Evergreen vs Mint Cream) rather than drop shadows to create hierarchy. Cards are defined by solid color blocks and borders rather than floating shadows, projecting institutional solidity.
+**Shadow Philosophy**: Contrast between Evergreen and Mint Cream does most of the work. Shadows are soft and low-opacity, tinted Evergreen where custom, and are used to add lift on hover. Avoid hard, dark shadows.
 
 ## 7. Do's and Don'ts
 
@@ -118,7 +127,7 @@ The typography pairing is the system's secret weapon. Asul provides institutiona
 - Don't use Tiger Orange for core institutional messaging or large background fills.
 - Don't mix Asul and Chivo within the same paragraph.
 - Don't use Mint Leaf for body text (fails contrast ratios).
-- Don't use heavy drop shadows; rely on color blocking for depth.
+- Don't use hard or dark drop shadows; keep them soft and low-opacity (see Section 6).
 
 ## 8. Responsive Behavior
 
@@ -137,6 +146,6 @@ The typography pairing is the system's secret weapon. Asul provides institutiona
 - Support: Pale Oak (`#E1C9B3`)
 
 ### Example Component Prompts
-- "Create a stat card on an Evergreen (#003124) background. The main number should be Asul 56px in white. The label should be Chivo 16px in Mint Cream. Include a verified eyebrow in General Sans 12px with wide tracking, using Mint Leaf."
-- "Design a hero section with a Mint Cream (#F2FBF6) background. Headline in Asul 700 (#003124). Add a primary CTA button with Evergreen background and Mint Cream text."
+- "Create a stat card using `CardStatBlock`: white card, Pale Oak border, rounded-lg, shadow-sm with hover lift. Large Asul figure in Evergreen with CountUp, a short Chivo label, and a VerifiedBadge source line."
+- "Design a hero section with a Mint Cream (#F2FBF6) background. Tiger Orange Chivo eyebrow (text-xs, bold, tracking-widest). Headline in Asul 700 (#003124). Add a primary pill `Button` (Evergreen background, Mint Cream text)."
 - "Build an alert banner using Tiger Orange (#F88404) as the background field, with Evergreen text. Use Chivo Medium 14px for the text."

@@ -9,8 +9,8 @@ import { StructureDiagram } from "@/features/about/components/StructureDiagram";
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
 
 export const metadata = {
-  title: 'About Us | YEIB',
-  description: 'Learn about the N-YEIB Investment Funds (YEIB) and our mission to bridge the capital gap for young Nigerian founders.',
+  title: 'About Us | YEIB Investment Fund',
+  description: 'Learn about the YEIB Investment Fund and our mission to bridge the capital gap for young Nigerian founders.',
 };
 
 export default function AboutPage() {

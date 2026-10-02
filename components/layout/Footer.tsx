@@ -56,7 +56,7 @@ export function Footer() {
         </div>
         
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-white/60">
-          <p>&copy; {currentYear} N-YEIB Investment Funds. All rights reserved.</p>
+          <p>&copy; {currentYear} YEIB Investment Fund. All rights reserved.</p>
           <p className="mt-4 md:mt-0">Anchored by AfDB</p>
         </div>
       </div>

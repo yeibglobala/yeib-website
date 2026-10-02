@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { ContactSection } from "@/features/contact/components/ContactSection";
 
 export const metadata: Metadata = {
-  title: "Contact Us | N-YEIB",
-  description: "Get in touch with N-YEIB for institutional partnerships, DFI engagement, and general questions.",
+  title: "Contact Us | YEIB Investment Fund",
+  description: "Get in touch with the YEIB Investment Fund for institutional partnerships, DFI engagement, and general questions.",
 };
 
 export default function ContactPage() {

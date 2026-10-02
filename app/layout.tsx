@@ -11,21 +11,13 @@ const asul = Asul({
 });
 
 const chivo = Chivo({
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-chivo",
 });
 
-// Using Chivo as a fallback for General Sans since we don't have the font file
-// In a real scenario, we'd load General Sans via localFont.
-const generalSans = Chivo({
-  weight: ["600"],
-  subsets: ["latin"],
-  variable: "--font-general-sans",
-});
-
 export const metadata: Metadata = {
-  title: "N-YEIB Investment Funds",
+  title: "YEIB Investment Fund",
   description: "Funding the dreams of young people & women.",
 };
 
@@ -35,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${asul.variable} ${chivo.variable} ${generalSans.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${asul.variable} ${chivo.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <Navbar />
         <main className="flex-1">{children}</main>

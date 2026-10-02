@@ -7,7 +7,7 @@ import { ImpactCommitment } from "@/features/impact/components/ImpactCommitment"
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
 
 export const metadata: Metadata = {
-  title: "Impact & Measurement | N-YEIB",
+  title: "Impact & Measurement | YEIB Investment Fund",
   description: "Tracking over 1.6M jobs, 38,400 supported MSMEs, and 50% gender-parity targets across Nigeria.",
 };
 

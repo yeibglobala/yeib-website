@@ -7,7 +7,7 @@ import { ESGPartnerships } from "@/features/esg/components/ESGPartnerships";
 import { ESGContactChannels } from "@/features/esg/components/ESGContactChannels";
 
 export const metadata = {
-  title: 'ESG & Sustainability | N-YEIB',
+  title: 'ESG & Sustainability | YEIB Investment Fund',
   description: 'Our approach to responsible investment, environmental and social risk management, transparency, and accountability.',
 };
 

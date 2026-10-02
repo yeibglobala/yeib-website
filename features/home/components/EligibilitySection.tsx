@@ -34,7 +34,7 @@ export function EligibilitySection() {
             Built for <span className="text-[var(--color-tiger-orange)]">youth-owned</span> MSMEs
           </h2>
           <p className="text-lg text-[var(--color-evergreen)]/80 max-w-2xl mb-8">
-            N-YEIB Investment Funds are designed for sector-agnostic youth-led and women-led micro, small, and medium enterprises across Nigeria.
+            The YEIB Investment Fund is designed for sector-agnostic youth-led and women-led micro, small, and medium enterprises across Nigeria.
           </p>
           
           <div className="flex flex-wrap gap-3">

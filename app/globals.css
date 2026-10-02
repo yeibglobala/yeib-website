@@ -9,7 +9,8 @@
 
   --font-asul: var(--font-asul), serif;
   --font-chivo: var(--font-chivo), sans-serif;
-  --font-general-sans: var(--font-general-sans), sans-serif;
+  /* Utility text (eyebrows, tags) uses Chivo */
+  --font-general-sans: var(--font-chivo), sans-serif;
 
   --background-color: var(--color-mint-cream);
   --text-color: var(--color-evergreen);
