@@ -5,7 +5,6 @@ import { FounderCarousel } from "@/features/home/components/FounderCarousel";
 import { StatsSection } from "@/features/home/components/StatsSection";
 import { EligibilitySection } from "@/features/home/components/EligibilitySection";
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "N-YEIB | Nigeria Youth Entrepreneurship Investment Bank",
@@ -19,20 +18,6 @@ export default function Home() {
       <PartnerLogos />
       <FounderCarousel />
       <EligibilitySection />
-      
-      <section className="w-full relative overflow-hidden bg-[var(--color-mint-cream)]">
-        <Image 
-          src="/asset/section-image.png" 
-          alt="YEIB Office and Environment" 
-          width={1535}
-          height={1024}
-          sizes="100vw"
-          unoptimized={true}
-          priority
-          className="w-full h-auto block"
-        />
-      </section>
-
       <StatsSection />
       <ClosingCTA />
     </div>

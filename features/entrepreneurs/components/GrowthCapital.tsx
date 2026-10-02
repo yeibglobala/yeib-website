@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 
 export function GrowthCapital() {
@@ -84,25 +83,6 @@ export function GrowthCapital() {
           ))}
         </motion.div>
       </div>
-
-      {/* Full Bleed Image Showcase */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-        className="w-full relative overflow-hidden"
-      >
-        <Image 
-          src="/asset/section-image.png"
-          alt="YEIB Office and Environment"
-          width={1535}
-          height={1024}
-          sizes="100vw"
-          unoptimized={true}
-          className="w-full h-auto block"
-        />
-      </motion.div>
     </section>
   );
 }
