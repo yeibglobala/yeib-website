@@ -41,7 +41,7 @@ export function TransparencyFramework() {
             <span className="text-[var(--color-evergreen)]/50 font-bold tracking-widest text-sm capitalize mb-8 block font-mono">
               Working With the Best
             </span>
-            <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
+            <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
               An institutional framework built on transparency.
             </h2>
             <p className="text-lg md:text-xl text-[var(--color-evergreen)]/80 leading-relaxed mx-auto max-w-2xl mb-16">

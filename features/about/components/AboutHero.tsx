@@ -22,7 +22,7 @@ export function AboutHero() {
       <div className="relative z-10 container mx-auto px-4 md:px-8 text-left text-white max-w-6xl flex flex-col justify-center h-full">
         <div className="max-w-xl mt-20 md:mt-0">
           <FadeIn direction="up">
-            <h1 className="mb-6 font-[var(--font-asul)] text-4xl lg:text-5xl leading-[1.15] font-bold text-white drop-shadow-sm">
+            <h1 className="mb-6 font-asul text-4xl lg:text-5xl leading-[1.15] font-bold text-white drop-shadow-sm">
               We Exist to Dismantle <br />
               the Barriers Standing <br />
               Between Young Founders <br />

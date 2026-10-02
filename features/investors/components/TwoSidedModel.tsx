@@ -40,7 +40,7 @@ export function TwoSidedModel() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight capitalize text-[var(--color-evergreen)]"
+              className="font-asul text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight capitalize text-[var(--color-evergreen)]"
             >
               The Two-Sided <br /> Model.
             </motion.h2>
@@ -76,7 +76,7 @@ export function TwoSidedModel() {
                 <div className="font-bold text-lg mb-8 opacity-60 tracking-widest capitalize">
                   {side.num}. {side.subtitle}
                 </div>
-                <h3 className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl font-bold mb-8 tracking-tighter capitalize leading-[0.9]">
+                <h3 className="font-asul text-4xl sm:text-5xl md:text-6xl font-bold mb-8 tracking-tighter capitalize leading-[0.9]">
                   {side.title}
                 </h3>
               </div>

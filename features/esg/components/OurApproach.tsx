@@ -32,7 +32,7 @@ export function OurApproach() {
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
         <FadeIn direction="up" className="mb-16">
           <Tag variant="soft" className="mb-6">Our Approach</Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] max-w-2xl">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] max-w-2xl">
             Our Approach to Sustainability
           </h2>
         </FadeIn>

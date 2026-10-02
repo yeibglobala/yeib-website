@@ -53,7 +53,7 @@ export function InstitutionalPartners() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] capitalize tracking-tight">
+            <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] capitalize tracking-tight">
               Backed By
             </h2>
           </motion.div>

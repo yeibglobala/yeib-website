@@ -54,7 +54,7 @@ export function ContactSection() {
             <div className="inline-block px-4 py-1.5 rounded-full border border-[var(--color-tiger-orange)] text-[var(--color-tiger-orange)] text-xs font-bold tracking-widest capitalize mb-6">
               Get in Touch
             </div>
-            <h1 className="font-[var(--font-asul)] text-4xl md:text-6xl font-bold mb-6 capitalize tracking-tight">
+            <h1 className="font-asul text-4xl md:text-6xl font-bold mb-6 capitalize tracking-tight">
               Contact <span className="text-[var(--color-tiger-orange)]">Us</span>.
             </h1>
             <p className="text-xl md:text-2xl text-[var(--color-evergreen)]/80 max-w-2xl font-medium">
@@ -83,7 +83,7 @@ export function ContactSection() {
           <div className="lg:col-span-5 flex flex-col gap-10">
             <FadeIn direction="up" delay={0.2}>
               <div className="bg-white rounded-2xl p-8 border border-[var(--color-evergreen)]/10 shadow-sm h-full flex flex-col gap-8">
-                <h2 className="font-[var(--font-asul)] text-3xl font-bold">Office & Contact</h2>
+                <h2 className="font-asul text-3xl font-bold">Office & Contact</h2>
                 
                 <div className="flex flex-col gap-6">
                   <div className="flex items-start gap-4">
@@ -131,7 +131,7 @@ export function ContactSection() {
           <div className="lg:col-span-7">
             <FadeIn direction="up" delay={0.3}>
               <div className="bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-evergreen)]/10 shadow-sm">
-                <h2 className="font-[var(--font-asul)] text-3xl font-bold mb-2">Partner with YEIB</h2>
+                <h2 className="font-asul text-3xl font-bold mb-2">Partner with YEIB</h2>
                 <p className="text-[var(--color-evergreen)]/70 mb-8 font-medium">
                   Use the form below to initiate a partnership discussion. 
                 </p>
@@ -141,7 +141,7 @@ export function ContactSection() {
                     <div className="w-16 h-16 bg-[var(--color-mint-cream)] text-[var(--color-mint-leaf)] rounded-full flex items-center justify-center mb-6 border border-[var(--color-mint-leaf)]/30">
                       <CheckCircle2 size={36} />
                     </div>
-                    <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)] mb-3">
+                    <h3 className="font-asul text-2xl font-bold text-[var(--color-evergreen)] mb-3">
                       Partnership Inquiry Received
                     </h3>
                     <p className="text-[var(--color-evergreen)]/70 max-w-sm mb-6 text-sm leading-relaxed">

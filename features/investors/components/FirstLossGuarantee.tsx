@@ -39,7 +39,7 @@ export function FirstLossGuarantee() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-7xl lg:text-[80px] leading-[1.05] font-bold tracking-tighter capitalize"
+              className="font-asul text-4xl sm:text-5xl md:text-7xl lg:text-[80px] leading-[1.05] font-bold tracking-tighter capitalize"
             >
               We Absorb Up To 75% Of The Risk. You Keep The Returns.
             </motion.h2>

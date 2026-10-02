@@ -36,7 +36,7 @@ export function GrowthCapital() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-4xl md:text-6xl lg:text-7xl font-bold text-[var(--color-evergreen)] max-w-4xl tracking-tight leading-[1.1]"
+              className="font-asul text-4xl md:text-6xl lg:text-7xl font-bold text-[var(--color-evergreen)] max-w-4xl tracking-tight leading-[1.1]"
             >
               Growth Capital, Direct or Through Funds You Trust.
             </motion.h2>

@@ -10,7 +10,7 @@ export function StructureDiagram() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs">
             Operational Structure
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold mb-6">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold mb-6">
             YEIB Nigeria Investment Management Company Ltd. (ManCo)
           </h2>
           <p className="text-lg text-white/80 max-w-3xl mx-auto">

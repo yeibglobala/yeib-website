@@ -80,7 +80,7 @@ export function InquiryForm() {
             >
               <MessageSquareText size={28} />
             </motion.div>
-            <h1 className="font-[var(--font-asul)] text-4xl md:text-5xl font-bold mb-6">
+            <h1 className="font-asul text-4xl md:text-5xl font-bold mb-6">
               General Inquiry
             </h1>
             <p className="text-lg md:text-xl text-[var(--color-evergreen)]/80 max-w-2xl mx-auto">
@@ -100,7 +100,7 @@ export function InquiryForm() {
                 <div className="w-20 h-20 bg-[var(--color-mint-cream)] text-[var(--color-mint-leaf)] rounded-full flex items-center justify-center mb-6 border border-[var(--color-mint-leaf)]/30">
                   <CheckCircle2 size={44} />
                 </div>
-                <h3 className="font-[var(--font-asul)] text-2xl md:text-3xl font-bold text-[var(--color-evergreen)] mb-3">
+                <h3 className="font-asul text-2xl md:text-3xl font-bold text-[var(--color-evergreen)] mb-3">
                   Inquiry Submitted Successfully
                 </h3>
                 <p className="text-[var(--color-evergreen)]/70 max-w-md mx-auto mb-8 leading-relaxed">

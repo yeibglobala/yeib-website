@@ -39,7 +39,7 @@ export function ImpactCommitment() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-7xl lg:text-[80px] leading-[1.05] font-bold text-white tracking-tighter"
+              className="font-asul text-4xl sm:text-5xl md:text-7xl lg:text-[80px] leading-[1.05] font-bold text-white tracking-tighter"
             >
               As We Deploy Capital, We&apos;ll Publish What We Find Here - Not Just What Looks Good.
             </motion.h2>

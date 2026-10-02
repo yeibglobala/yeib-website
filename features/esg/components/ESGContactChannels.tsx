@@ -90,7 +90,7 @@ export function ESGContactChannels() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight capitalize"
+              className="font-asul text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight capitalize"
             >
               Accountability In Action.
             </motion.h2>
@@ -132,7 +132,7 @@ export function ESGContactChannels() {
               </div>
               
               <div className="mb-12 flex-grow">
-                <h3 className="font-[var(--font-asul)] text-3xl font-bold mb-6 tracking-tight capitalize">{channel.title}</h3>
+                <h3 className="font-asul text-3xl font-bold mb-6 tracking-tight capitalize">{channel.title}</h3>
                 <p className="text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-medium">{channel.desc}</p>
               </div>
 
@@ -175,13 +175,13 @@ export function ESGContactChannels() {
               <X className="w-8 h-8 text-[var(--color-evergreen)]" strokeWidth={1} />
             </button>
             
-            <h2 className="font-[var(--font-asul)] text-4xl font-bold text-[var(--color-evergreen)] mb-2 capitalize">Submit a Grievance</h2>
+            <h2 className="font-asul text-4xl font-bold text-[var(--color-evergreen)] mb-2 capitalize">Submit a Grievance</h2>
             <p className="text-sm text-[var(--color-evergreen)]/70 mb-8 font-medium">This form is for environmental, social, or project-related concerns. You will not face retaliation for submitting a grievance.</p>
             
             {status === "success" ? (
               <div className="py-8 text-center space-y-4">
                 <CheckCircle2 className="w-12 h-12 text-[var(--color-evergreen)] mx-auto" />
-                <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)]">
+                <h3 className="font-asul text-2xl font-bold text-[var(--color-evergreen)]">
                   Grievance Registered Securely
                 </h3>
                 <p className="text-sm text-[var(--color-evergreen)]/80 max-w-md mx-auto">

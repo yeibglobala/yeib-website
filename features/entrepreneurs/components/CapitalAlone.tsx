@@ -52,7 +52,7 @@ export function CapitalAlone() {
                   hidden: { y: "100%", opacity: 0 },
                   visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
                 }}
-                className="font-[var(--font-asul)] text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight capitalize leading-[1.1]"
+                className="font-asul text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight capitalize leading-[1.1]"
               >
                 With Ecosystem Support <br className="hidden md:block" />
                 And Overall Capacity <br className="hidden md:block" />
@@ -76,7 +76,7 @@ export function CapitalAlone() {
                 onClick={() => toggleAccordion(index)}
                 className="w-full py-8 md:py-12 flex justify-between items-center text-left hover:bg-[var(--color-mint-cream)] transition-colors px-4 -mx-4 group"
               >
-                <h3 className="font-[var(--font-asul)] text-2xl md:text-4xl lg:text-5xl font-bold capitalize transition-transform duration-300 group-hover:translate-x-2">
+                <h3 className="font-asul text-2xl md:text-4xl lg:text-5xl font-bold capitalize transition-transform duration-300 group-hover:translate-x-2">
                   {service.title}
                 </h3>
                 <div className="flex-shrink-0 ml-8 text-[var(--color-evergreen)]">

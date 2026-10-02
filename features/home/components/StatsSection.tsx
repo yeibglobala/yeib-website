@@ -14,7 +14,7 @@ export function StatsSection() {
           <p className="text-[var(--color-tiger-orange)] font-bold text-sm tracking-wider capitalize mb-4">
             Goals
           </p>
-          <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-evergreen)]">
+          <h2 className="font-asul text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-evergreen)]">
             20-year Targets
           </h2>
         </FadeIn>

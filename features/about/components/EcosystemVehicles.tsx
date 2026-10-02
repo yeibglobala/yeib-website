@@ -38,7 +38,7 @@ export function EcosystemVehicles() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs border-[var(--color-evergreen)] text-[var(--color-evergreen)]">
             Ecosystem
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
             Complementary Vehicles
           </h2>
           <p className="text-lg text-[var(--color-evergreen)]/80 max-w-3xl">

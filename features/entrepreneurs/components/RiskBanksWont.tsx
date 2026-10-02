@@ -47,7 +47,7 @@ export function RiskBanksWont() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-5xl sm:text-7xl md:text-[96px] lg:text-[110px] leading-[0.9] font-bold text-[var(--color-evergreen)] mb-16 tracking-tighter capitalize"
+              className="font-asul text-5xl sm:text-7xl md:text-[96px] lg:text-[110px] leading-[0.9] font-bold text-[var(--color-evergreen)] mb-16 tracking-tighter capitalize"
             >
               We Take On <br />
               The Risk <span className="text-[var(--color-tiger-orange)]">Lenders</span> <br />

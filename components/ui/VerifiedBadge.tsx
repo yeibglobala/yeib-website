@@ -9,7 +9,7 @@ export function VerifiedBadge({ source, className, ...props }: VerifiedBadgeProp
   return (
     <span
       className={cn(
-        "inline-flex items-center text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--color-evergreen)] font-[var(--font-general-sans)]",
+        "inline-flex items-center text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--color-evergreen)] font-general-sans",
         className
       )}
       {...props}

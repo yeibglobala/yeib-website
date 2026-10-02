@@ -9,7 +9,7 @@ export function ClosingCTA() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--color-mint-leaf)]/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--color-tiger-orange)]/10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 pointer-events-none"></div>
           
-          <h2 className="font-[var(--font-asul)] text-4xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6 relative z-10">
+          <h2 className="font-asul text-4xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6 relative z-10">
             Join the movement.
           </h2>
           <p className="text-lg text-[var(--color-evergreen)]/80 max-w-2xl mx-auto mb-10 relative z-10">
