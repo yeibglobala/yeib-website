@@ -4,7 +4,6 @@ import { ESGTargets } from "@/features/esg/components/ESGTargets";
 import { FourTraits } from "@/features/impact/components/FourTraits";
 import { DocumentLibrary } from "@/features/esg/components/DocumentLibrary";
 import { ESGPartnerships } from "@/features/esg/components/ESGPartnerships";
-import { ESGContactChannels } from "@/features/esg/components/ESGContactChannels";
 
 export const metadata = {
   title: 'ESG & Sustainability | YEIB Investment Fund',
@@ -20,7 +19,6 @@ export default function ESGPage() {
       <FourTraits />
       <DocumentLibrary />
       <ESGPartnerships />
-      <ESGContactChannels />
     </div>
   );
 }
