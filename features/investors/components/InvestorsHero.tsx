@@ -61,7 +61,7 @@ export function InvestorsHero() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-5xl sm:text-6xl md:text-7xl lg:text-[100px] leading-[0.95] font-bold text-white tracking-tighter"
+              className="font-asul text-5xl sm:text-6xl md:text-7xl lg:text-[100px] leading-[0.95] font-bold text-white tracking-tighter"
             >
               A $300M Thesis-Driven <br />
               <span className="text-[var(--color-tiger-orange)]">Capital Fund.</span>

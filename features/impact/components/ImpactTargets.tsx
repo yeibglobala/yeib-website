@@ -57,7 +57,7 @@ export function ImpactTargets() {
                   hidden: { y: "100%", opacity: 0 },
                   visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
                 }}
-                className="font-[var(--font-asul)] text-4xl md:text-6xl font-bold tracking-tight capitalize"
+                className="font-asul text-4xl md:text-6xl font-bold tracking-tight capitalize"
               >
                 The Numbers <br />
                 That <span className="text-[var(--color-tiger-orange)]">Matter.</span>
@@ -99,7 +99,7 @@ export function ImpactTargets() {
               }}
               className={`p-8 md:p-16 border-b border-[var(--color-evergreen)]/20 ${index % 2 === 0 ? 'md:border-r' : ''}`}
             >
-              <div className="font-[var(--font-asul)] text-[80px] sm:text-[100px] md:text-[120px] leading-[0.9] font-bold text-[var(--color-evergreen)] mb-12 tracking-tighter">
+              <div className="font-asul text-[80px] sm:text-[100px] md:text-[120px] leading-[0.9] font-bold text-[var(--color-evergreen)] mb-12 tracking-tighter">
                 {target.number !== "Year 5" ? (
                   <CountUp text={target.number} />
                 ) : (

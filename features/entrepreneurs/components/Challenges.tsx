@@ -20,7 +20,7 @@ export function Challenges() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs border-[var(--color-evergreen)] text-[var(--color-evergreen)]">
             The Reality
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
             Challenges Addressed
           </h2>
         </FadeIn>

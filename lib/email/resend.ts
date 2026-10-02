@@ -21,7 +21,7 @@ export const EMAIL_CONFIG = {
 };
 
 export interface ProcessFormSubmissionOptions {
-  formType: "general_inquiry" | "partnership" | "application" | "esg_grievance";
+  formType: "general_inquiry" | "partnership" | "application" | "esg_grievance" | "esg_whistleblowing";
   recipientTo?: string;
   senderName: string;
   senderEmail: string;
@@ -29,6 +29,8 @@ export interface ProcessFormSubmissionOptions {
   templateData: EmailTemplateData;
   confirmationIntro: string;
   referenceNumber?: string;
+  /** Add the sender to the Resend audience (default true). */
+  syncToAudience?: boolean;
   audienceData?: {
     firstName?: string;
     lastName?: string;
@@ -71,7 +73,7 @@ export async function processFormSubmission(
       await resend.emails.send({
         from: EMAIL_CONFIG.from,
         to: toEmail,
-        replyTo: options.senderEmail,
+        ...(options.senderEmail.includes("@") ? { replyTo: options.senderEmail } : {}),
         subject: options.referenceNumber
           ? `[${options.referenceNumber}] ${options.subject}`
           : options.subject,
@@ -107,7 +109,7 @@ export async function processFormSubmission(
       }
 
       // Optional: Sync contact to Resend Audience
-      if (EMAIL_CONFIG.audienceId && options.senderEmail) {
+      if (EMAIL_CONFIG.audienceId && options.senderEmail && options.syncToAudience !== false) {
         try {
           await resend.contacts.create({
             email: options.senderEmail,

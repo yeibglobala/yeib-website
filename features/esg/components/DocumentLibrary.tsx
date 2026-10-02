@@ -27,7 +27,7 @@ export function DocumentLibrary() {
       <div className="container mx-auto px-4 max-w-5xl">
         <FadeIn direction="up" className="mb-12">
           <Tag variant="soft" className="mb-6">Disclosures</Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-6">
             Document Library
           </h2>
           <p className="text-lg text-[var(--color-evergreen)]/80 max-w-2xl">

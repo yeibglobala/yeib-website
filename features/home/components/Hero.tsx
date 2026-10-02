@@ -22,7 +22,7 @@ export function Hero({ isActive = true }: { isActive?: boolean }) {
           animate={isActive ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.2 }}
         >
-          <h1 className="mb-8 md:mb-12 font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl lg:text-[72px] leading-[1.2] md:leading-[1.1] font-bold text-white drop-shadow-md">
+          <h1 className="mb-8 md:mb-12 font-asul text-4xl sm:text-5xl md:text-6xl lg:text-[72px] leading-[1.2] md:leading-[1.1] font-bold text-white drop-shadow-md">
             The Institutional Bridge Between Capital and Ambition
           </h1>
         </motion.div>

@@ -350,7 +350,7 @@ export function ApplySection() {
           <FadeIn direction="up">
             {/* Bold Editorial Top Hero */}
             <div className="mb-20 sm:mb-24 md:mb-28 lg:mb-32 max-w-4xl">
-              <h1 className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--color-evergreen)] leading-[1.08] mb-6">
+              <h1 className="font-asul text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--color-evergreen)] leading-[1.08] mb-6">
                 Work with the YEIB{" "}
                 <span className="text-[var(--color-tiger-orange)] italic font-serif">Investment Fund</span>
               </h1>
@@ -380,7 +380,7 @@ export function ApplySection() {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-evergreen)]/15">
                 <div>
-                  <h2 className="font-[var(--font-asul)] text-2xl sm:text-3xl font-bold text-[var(--color-evergreen)]">
+                  <h2 className="font-asul text-2xl sm:text-3xl font-bold text-[var(--color-evergreen)]">
                     Select your stakeholder group
                   </h2>
                 </div>
@@ -416,7 +416,7 @@ export function ApplySection() {
                         </div>
 
                         {/* Title */}
-                        <h3 className="font-[var(--font-asul)] text-2xl sm:text-3xl font-bold tracking-tight mb-4 leading-snug text-[var(--color-evergreen)] group-hover:text-white transition-colors">
+                        <h3 className="font-asul text-2xl sm:text-3xl font-bold tracking-tight mb-4 leading-snug text-[var(--color-evergreen)] group-hover:text-white transition-colors">
                           {group.name}
                         </h3>
 
@@ -462,7 +462,7 @@ export function ApplySection() {
                 <span className="text-xs font-mono font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-2">
                   Section A • Common Intake
                 </span>
-                <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)]">
+                <h2 className="font-asul text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)]">
                   Contact & Organisation Details
                 </h2>
                 <p className="text-sm text-[var(--color-evergreen)]/70 mt-2">
@@ -634,7 +634,7 @@ export function ApplySection() {
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[var(--color-mint-leaf)] text-xs font-mono font-bold uppercase tracking-wider mb-4">
                     <span>Focus Overview • Form 0{selectedGroup.formNumber}</span>
                   </div>
-                  <h3 className="font-[var(--font-asul)] text-2xl sm:text-3xl font-bold mb-3">
+                  <h3 className="font-asul text-2xl sm:text-3xl font-bold mb-3">
                     {selectedGroup.name}
                   </h3>
                   <p className="text-sm text-white/85 leading-relaxed font-normal">
@@ -946,7 +946,7 @@ export function ApplySection() {
                   <span className="text-xs font-mono font-bold uppercase tracking-widest text-[var(--color-tiger-orange)] block mb-2">
                     Section C • Final Consent
                   </span>
-                  <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)]">
+                  <h2 className="font-asul text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)]">
                     Declarations & Legal Acknowledgements
                   </h2>
                   <p className="text-sm text-[var(--color-evergreen)]/70 mt-2">
@@ -1142,7 +1142,7 @@ export function ApplySection() {
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-[var(--color-mint-leaf)] block mb-2">
                 Submission Successfully Registered
               </span>
-              <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)] mb-4">
+              <h2 className="font-asul text-3xl sm:text-4xl font-bold text-[var(--color-evergreen)] mb-4">
                 Thank you for applying.
               </h2>
               <p className="text-sm text-[var(--color-evergreen)]/80 leading-relaxed max-w-lg mx-auto mb-8">
@@ -1234,7 +1234,7 @@ export function ApplySection() {
             >
               <X size={20} />
             </button>
-            <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)] mb-3">
+            <h3 className="font-asul text-2xl font-bold text-[var(--color-evergreen)] mb-3">
               Data Protection & Privacy Notice
             </h3>
             <div className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 space-y-3 leading-relaxed">
@@ -1271,7 +1271,7 @@ export function ApplySection() {
             >
               <X size={20} />
             </button>
-            <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)] mb-3">
+            <h3 className="font-asul text-2xl font-bold text-[var(--color-evergreen)] mb-3">
               YEIB Environmental & Social Exclusion List
             </h3>
             <p className="text-xs text-[var(--color-evergreen)]/70 mb-4">

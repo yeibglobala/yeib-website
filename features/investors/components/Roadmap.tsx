@@ -17,7 +17,7 @@ export function Roadmap() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs">
             The Timeline
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold mb-6">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold mb-6">
             Operational Roadmap
           </h2>
         </FadeIn>

@@ -23,7 +23,7 @@ export function OptionTwoHero({ isActive = true }: { isActive?: boolean }) {
             isActive ? "opacity-100 translate-y-0 delay-300" : "opacity-0 translate-y-12"
           )}
         >
-          <h1 className="mb-8 md:mb-12 font-[var(--font-asul)] text-3xl sm:text-4xl md:text-5xl lg:text-[72px] leading-[1.2] md:leading-[1.1] font-bold text-white drop-shadow-sm">
+          <h1 className="mb-8 md:mb-12 font-asul text-3xl sm:text-4xl md:text-5xl lg:text-[72px] leading-[1.2] md:leading-[1.1] font-bold text-white drop-shadow-sm">
             The institutional bridge between capital and ambition
           </h1>
         </div>

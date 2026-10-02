@@ -17,7 +17,7 @@ export function ESGHero() {
               ESG & Sustainability
             </div>
             
-            <h1 className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl lg:text-[72px] leading-[1.1] font-bold text-white mb-8">
+            <h1 className="font-asul text-4xl sm:text-5xl md:text-6xl lg:text-[72px] leading-[1.1] font-bold text-white mb-8">
               Responsible Investment for Sustainable Impact.
             </h1>
             

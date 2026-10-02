@@ -17,7 +17,7 @@ export function SweetSpot() {
     },
     {
       title: "Permanent Vehicle",
-      desc: "A 20-year lifecycle designed for long-term sustainability vs. one-off programs."
+      desc: "A 20-year lifecycle designed for long-term sustainability."
     }
   ];
 
@@ -28,7 +28,7 @@ export function SweetSpot() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs border-[var(--color-evergreen)] text-[var(--color-evergreen)]">
             Our Sweet Spot
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)]">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)]">
             What makes YEIB different?
           </h2>
         </FadeIn>

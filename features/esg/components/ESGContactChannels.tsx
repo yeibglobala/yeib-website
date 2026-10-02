@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight, X, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { motion } from "framer-motion";
-import { submitGrievanceAction } from "@/lib/email/actions";
+import { submitGrievanceAction, submitWhistleblowingAction } from "@/lib/email/actions";
 
 export function ESGContactChannels() {
-  const [showGrievanceForm, setShowGrievanceForm] = useState(false);
+  const router = useRouter();
+  const [activeForm, setActiveForm] = useState<"grievance" | "whistleblowing" | null>(null);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -45,6 +47,42 @@ export function ESGContactChannels() {
     }
   };
 
+  const handleWhistleblowingSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus("submitting");
+    setErrorMessage("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const honeypot = (formData.get("website_url_hp") as string) || "";
+    const fullName = (formData.get("fullName") as string) || "";
+    const contactInfo = (formData.get("contactInfo") as string) || "";
+    const concernType = (formData.get("concernType") as string) || "";
+    const personsInvolved = (formData.get("personsInvolved") as string) || "";
+    const details = (formData.get("details") as string) || "";
+
+    try {
+      const result = await submitWhistleblowingAction({
+        fullName,
+        contactInfo,
+        concernType,
+        personsInvolved,
+        details,
+        honeypot,
+      });
+
+      if (result.success) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+        setErrorMessage(result.message || "Failed to submit report. Please try again.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMessage("An unexpected error occurred. Please try again later.");
+    }
+  };
+
   const channels = [
     {
       num: "01",
@@ -53,7 +91,7 @@ export function ESGContactChannels() {
       actionText: "Submit a Grievance",
       action: () => {
         setStatus("idle");
-        setShowGrievanceForm(true);
+        setActiveForm("grievance");
       }
     },
     {
@@ -61,14 +99,17 @@ export function ESGContactChannels() {
       title: "WHISTLEBLOWING",
       desc: "A strictly confidential and anonymous channel for reporting suspected fraud, corruption, misconduct, unethical behaviour, or conflicts of interest. Protected by our non-retaliation policy.",
       actionText: "Report Misconduct",
-      action: () => alert("Redirecting to secure reporting portal...")
+      action: () => {
+        setStatus("idle");
+        setActiveForm("whistleblowing");
+      }
     },
     {
       num: "03",
       title: "GENERAL ENQUIRIES",
       desc: "For standard questions regarding the fund, application processes, partnership opportunities, or media requests that do not involve a grievance or whistleblowing.",
       actionText: "Contact Us",
-      action: () => alert("Redirecting to contact page...")
+      action: () => router.push("/form")
     }
   ];
 
@@ -90,7 +131,7 @@ export function ESGContactChannels() {
                 hidden: { y: "100%", opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="font-[var(--font-asul)] text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight capitalize"
+              className="font-asul text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight capitalize"
             >
               Accountability In Action.
             </motion.h2>
@@ -132,7 +173,7 @@ export function ESGContactChannels() {
               </div>
               
               <div className="mb-12 flex-grow">
-                <h3 className="font-[var(--font-asul)] text-3xl font-bold mb-6 tracking-tight capitalize">{channel.title}</h3>
+                <h3 className="font-asul text-3xl font-bold mb-6 tracking-tight capitalize">{channel.title}</h3>
                 <p className="text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-medium">{channel.desc}</p>
               </div>
 
@@ -165,23 +206,23 @@ export function ESGContactChannels() {
       </div>
 
       {/* Modal for Grievance Form */}
-      {showGrievanceForm && (
+      {activeForm === "grievance" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-evergreen)]/95 backdrop-blur-md">
           <div className="bg-[var(--color-mint-cream)] rounded-none border border-white/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <button 
-              onClick={() => setShowGrievanceForm(false)}
+              onClick={() => setActiveForm(null)}
               className="absolute top-6 right-6 p-2 rounded-none hover:bg-white/50 transition-colors"
             >
               <X className="w-8 h-8 text-[var(--color-evergreen)]" strokeWidth={1} />
             </button>
             
-            <h2 className="font-[var(--font-asul)] text-4xl font-bold text-[var(--color-evergreen)] mb-2 capitalize">Submit a Grievance</h2>
+            <h2 className="font-asul text-4xl font-bold text-[var(--color-evergreen)] mb-2 capitalize">Submit a Grievance</h2>
             <p className="text-sm text-[var(--color-evergreen)]/70 mb-8 font-medium">This form is for environmental, social, or project-related concerns. You will not face retaliation for submitting a grievance.</p>
             
             {status === "success" ? (
               <div className="py-8 text-center space-y-4">
                 <CheckCircle2 className="w-12 h-12 text-[var(--color-evergreen)] mx-auto" />
-                <h3 className="font-[var(--font-asul)] text-2xl font-bold text-[var(--color-evergreen)]">
+                <h3 className="font-asul text-2xl font-bold text-[var(--color-evergreen)]">
                   Grievance Registered Securely
                 </h3>
                 <p className="text-sm text-[var(--color-evergreen)]/80 max-w-md mx-auto">
@@ -193,7 +234,7 @@ export function ESGContactChannels() {
                     className="bg-[var(--color-evergreen)] text-white hover:bg-[var(--color-evergreen)]/90 rounded-none py-4 px-6 text-xs uppercase tracking-widest"
                     onClick={() => {
                       setStatus("idle");
-                      setShowGrievanceForm(false);
+                      setActiveForm(null);
                     }}
                   >
                     Close
@@ -241,7 +282,121 @@ export function ESGContactChannels() {
                 </div>
                 
                 <div className="pt-8 flex flex-col sm:flex-row justify-end gap-4">
-                  <Button type="button" variant="secondary" className="bg-transparent border border-[var(--color-evergreen)]/30 rounded-none py-6 capitalize tracking-widest text-xs" onClick={() => setShowGrievanceForm(false)}>
+                  <Button type="button" variant="secondary" className="bg-transparent border border-[var(--color-evergreen)]/30 rounded-none py-6 capitalize tracking-widest text-xs" onClick={() => setActiveForm(null)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    disabled={status === "submitting"}
+                    className="bg-[var(--color-tiger-orange)] hover:bg-orange-600 text-white rounded-none py-6 capitalize tracking-widest text-xs flex items-center justify-center gap-2"
+                  >
+                    {status === "submitting" ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Submitting Securely...</span>
+                      </>
+                    ) : (
+                      "Submit Securely"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Modal for Whistleblowing Form */}
+      {activeForm === "whistleblowing" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-evergreen)]/95 backdrop-blur-md">
+          <div className="bg-[var(--color-mint-cream)] rounded-none border border-white/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setActiveForm(null)}
+              className="absolute top-6 right-6 p-2 rounded-none hover:bg-white/50 transition-colors"
+            >
+              <X className="w-8 h-8 text-[var(--color-evergreen)]" strokeWidth={1} />
+            </button>
+            
+            <h2 className="font-asul text-4xl font-bold text-[var(--color-evergreen)] mb-2 capitalize">Report Misconduct</h2>
+            <p className="text-sm text-[var(--color-evergreen)]/70 mb-8 font-medium">This channel is strictly confidential. You may report anonymously, and you are protected by our non-retaliation policy.</p>
+            
+            {status === "success" ? (
+              <div className="py-8 text-center space-y-4">
+                <CheckCircle2 className="w-12 h-12 text-[var(--color-evergreen)] mx-auto" />
+                <h3 className="font-asul text-2xl font-bold text-[var(--color-evergreen)]">
+                  Report Registered Securely
+                </h3>
+                <p className="text-sm text-[var(--color-evergreen)]/80 max-w-md mx-auto">
+                  Thank you for speaking up. Your report will be reviewed in strict confidence and handled under our non-retaliation policy.
+                </p>
+                <div className="pt-4">
+                  <Button
+                    type="button"
+                    className="bg-[var(--color-evergreen)] text-white hover:bg-[var(--color-evergreen)]/90 rounded-none py-4 px-6 text-xs uppercase tracking-widest"
+                    onClick={() => {
+                      setStatus("idle");
+                      setActiveForm(null);
+                    }}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <form className="space-y-6" onSubmit={handleWhistleblowingSubmit}>
+                {/* Honeypot field */}
+                <input
+                  type="text"
+                  name="website_url_hp"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  style={{ display: "none" }}
+                  aria-hidden="true"
+                />
+
+                {status === "error" && (
+                  <div className="flex items-start gap-2 p-3 bg-red-100 text-red-800 text-xs">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{errorMessage || "Submission failed. Please try again."}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Full Name (Optional)</label>
+                    <input name="fullName" type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="Jane Doe" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Email or Phone Number (Optional)</label>
+                    <input name="contactInfo" type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="Only if you want us to follow up" />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="concernType" className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Nature of Concern *</label>
+                    <select id="concernType" name="concernType" defaultValue="" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none cursor-pointer" required>
+                      <option value="" disabled>Select a category</option>
+                      <option value="fraud">Fraud</option>
+                      <option value="corruption">Corruption or Bribery</option>
+                      <option value="misconduct">Misconduct</option>
+                      <option value="unethical">Unethical Behaviour</option>
+                      <option value="conflict">Conflict of Interest</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="personsInvolved" className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Persons / Entities Involved (Optional)</label>
+                    <input id="personsInvolved" name="personsInvolved" type="text" className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none" placeholder="Who is involved?" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold tracking-widest capitalize text-[var(--color-evergreen)]/70 mb-2">Details of the Concern *</label>
+                  <textarea name="details" rows={5} className="w-full bg-transparent border-b border-[var(--color-evergreen)]/30 focus:border-[var(--color-tiger-orange)] py-3 px-0 focus:outline-none transition-colors rounded-none resize-none" placeholder="What happened, when and where? Include any evidence you can share..." required></textarea>
+                </div>
+                
+                <div className="pt-8 flex flex-col sm:flex-row justify-end gap-4">
+                  <Button type="button" variant="secondary" className="bg-transparent border border-[var(--color-evergreen)]/30 rounded-none py-6 capitalize tracking-widest text-xs" onClick={() => setActiveForm(null)}>
                     Cancel
                   </Button>
                   <Button 

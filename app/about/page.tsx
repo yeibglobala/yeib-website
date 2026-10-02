@@ -2,8 +2,7 @@ import { AboutHero } from "@/features/about/components/AboutHero";
 import { TheChallenge } from "@/features/about/components/TheChallenge";
 import { TransparencyFramework } from "@/features/about/components/TransparencyFramework";
 import { SweetSpot } from "@/features/about/components/SweetSpot";
-import { EcosystemVehicles } from "@/features/about/components/EcosystemVehicles";
-import { StructureDiagram } from "@/features/about/components/StructureDiagram";
+import { OperationalStructure } from "@/features/about/components/OperationalStructure";
 import { ClosingCTA } from "@/features/home/components/ClosingCTA";
 
 export const metadata = {
@@ -17,8 +16,7 @@ export default function AboutPage() {
       <AboutHero />
       <TheChallenge />
       <SweetSpot />
-      <StructureDiagram />
-      <EcosystemVehicles />
+      <OperationalStructure />
       <TransparencyFramework />
       <ClosingCTA />
     </div>

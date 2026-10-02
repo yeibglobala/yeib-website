@@ -30,7 +30,7 @@ export function EligibilitySection() {
           <p className="text-[var(--color-tiger-orange)] font-bold text-sm tracking-wider capitalize mb-4">
             Eligibility
           </p>
-          <h2 className="font-[var(--font-asul)] text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-4">
+          <h2 className="font-asul text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-evergreen)] mb-4">
             Built for <span className="text-[var(--color-tiger-orange)]">youth-owned</span> MSMEs
           </h2>
           <p className="text-lg text-[var(--color-evergreen)]/80 max-w-2xl mb-8">
@@ -60,7 +60,7 @@ export function EligibilitySection() {
             <div className="space-y-8">
               {goals.map((goal, i) => (
                 <div key={i} className="pb-8 border-b border-white/10 last:border-0 last:pb-0">
-                  <div className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl font-bold mb-2">
+                  <div className="font-asul text-4xl sm:text-5xl md:text-6xl font-bold mb-2">
                     <CountUp text={goal.value} />
                   </div>
                   <div className="text-white/80 mb-4 text-sm font-medium">

@@ -49,7 +49,7 @@ export function ESGPartnerships() {
             Partnerships
           </div>
           
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold mb-6 max-w-2xl">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold mb-6 max-w-2xl">
             Collaboration for scale and sustainability.
           </h2>
           

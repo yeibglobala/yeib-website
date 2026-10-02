@@ -26,7 +26,7 @@ export function EntrepreneursHero() {
               Founders
             </div>
             
-            <h1 className="mb-6 font-[var(--font-asul)] text-4xl lg:text-5xl leading-[1.15] font-bold text-white drop-shadow-sm">
+            <h1 className="mb-6 font-asul text-4xl lg:text-5xl leading-[1.15] font-bold text-white drop-shadow-sm">
               Capital and Support, <br className="hidden md:block" />
               Structured for How <br className="hidden md:block" />
               Your Business <br className="hidden md:block" />

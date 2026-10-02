@@ -16,7 +16,7 @@ export function SectorOpportunity() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs border-[var(--color-evergreen)]/20 text-[var(--color-evergreen)]">
             Where We Play
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold mb-6">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold mb-6">
             Sector Opportunity
           </h2>
           <p className="text-lg text-white/80 max-w-3xl">

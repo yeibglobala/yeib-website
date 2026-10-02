@@ -27,7 +27,7 @@ export function ImpactFramework() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs border-[var(--color-evergreen)] text-[var(--color-evergreen)]">
             Impact Evaluation
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold text-[var(--color-evergreen)]">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold text-[var(--color-evergreen)]">
             The 3A Framework
           </h2>
         </FadeIn>

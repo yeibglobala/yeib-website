@@ -30,7 +30,7 @@ export function ESGTargets() {
           <Tag variant="soft" className="mb-6 capitalize tracking-widest text-xs border-[var(--color-evergreen)] text-[var(--color-evergreen)]">
             Our Commitments
           </Tag>
-          <h2 className="font-[var(--font-asul)] text-3xl md:text-5xl font-bold mb-6">
+          <h2 className="font-asul text-3xl md:text-5xl font-bold mb-6">
             Key ESG Targets
           </h2>
           <p className="text-lg text-[var(--color-evergreen)]/80 max-w-2xl mx-auto">
@@ -43,7 +43,7 @@ export function ESGTargets() {
             <FadeIn key={i} delay={i * 100} direction="up" className="bg-white p-8 rounded-2xl border border-[var(--color-evergreen)]/10 shadow-sm h-full flex flex-col">
               <h3 className="text-xl font-bold mb-2 capitalize tracking-tight">{target.title}</h3>
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-4">
-                <span className="font-[var(--font-asul)] text-4xl xl:text-5xl font-bold text-[var(--color-tiger-orange)] leading-none">{target.value}</span>
+                <span className="font-asul text-4xl xl:text-5xl font-bold text-[var(--color-tiger-orange)] leading-none">{target.value}</span>
                 <span className="text-sm font-bold capitalize tracking-widest text-[var(--color-evergreen)]/50">{target.timeframe}</span>
               </div>
               <p className="text-[var(--color-evergreen)]/80 leading-relaxed font-medium">

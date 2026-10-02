@@ -21,6 +21,8 @@ export async function submitGeneralInquiryAction(data: {
     media: "Media & Press",
     general: "General Question",
     careers: "Careers",
+    misconduct: "Misconduct",
+    grievance: "Grievance",
     other: "Other",
   };
   const typeDisplay = inquiryLabels[data.inquiryType] || data.inquiryType || "General Question";
@@ -297,6 +299,58 @@ export async function submitGrievanceAction(data: {
           { label: "Reporter", value: reporter },
           { label: "Contact Channel", value: data.contactInfo },
           { label: "Project / Location", value: data.projectLocation },
+        ],
+        message: data.details,
+      },
+    },
+    data
+  );
+}
+
+// 5. ESG Whistleblowing Action (/esg)
+export async function submitWhistleblowingAction(data: {
+  fullName?: string;
+  contactInfo?: string;
+  concernType: string;
+  personsInvolved?: string;
+  details: string;
+  honeypot?: string;
+}): Promise<FormSubmissionResult> {
+  if (data.honeypot) {
+    return { success: true, message: "Report received.", backupSaved: false, emailSent: false };
+  }
+
+  const reporter = data.fullName?.trim() || "Anonymous Whistleblower";
+  const contactInfo = data.contactInfo?.trim() || "";
+  const concernLabels: Record<string, string> = {
+    fraud: "Fraud",
+    corruption: "Corruption or Bribery",
+    misconduct: "Misconduct",
+    unethical: "Unethical Behaviour",
+    conflict: "Conflict of Interest",
+    other: "Other",
+  };
+  const concern = concernLabels[data.concernType] || "Other";
+
+  return await processFormSubmission(
+    {
+      formType: "esg_whistleblowing",
+      recipientTo: EMAIL_CONFIG.esgTo,
+      senderName: reporter,
+      senderEmail: contactInfo.includes("@") ? contactInfo : "",
+      subject: `[Confidential Whistleblowing Report] ${concern}`,
+      confirmationIntro: "Your report has been securely registered with the YEIB Investment Fund. It will be handled in strict confidence under our non-retaliation policy.",
+      syncToAudience: false,
+      templateData: {
+        title: "Confidential Whistleblowing Report",
+        badge: "Whistleblowing",
+        senderName: reporter,
+        senderEmail: contactInfo || "Not provided",
+        details: [
+          { label: "Reporter", value: reporter },
+          { label: "Contact Channel", value: contactInfo || "Not provided (anonymous)" },
+          { label: "Nature of Concern", value: concern },
+          { label: "Persons / Entities Involved", value: data.personsInvolved?.trim() || "Not provided" },
         ],
         message: data.details,
       },
