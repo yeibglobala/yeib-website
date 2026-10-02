@@ -195,7 +195,7 @@ export function buildConfirmationEmailHtml(
           <!-- Footer -->
           <tr>
             <td style="background-color: #F2FBF6; border-top: 1px solid #E1C9B3; padding: 20px 32px; text-align: center; font-size: 12px; color: #666666;">
-              <p style="margin: 0 0 4px 0;"><strong>Nigeria Youth Entrepreneurship Investment Bank (N-YEIB)</strong></p>
+              <p style="margin: 0 0 4px 0;"><strong>Nigeria Youth Entrepreneurship Investment Fund (N-YEIB)</strong></p>
               <p style="margin: 0 0 4px 0; color: #888888;">Anchored by the African Development Bank (AfDB)</p>
               <p style="margin: 0; color: #999999;">Abuja, Nigeria</p>
             </td>
