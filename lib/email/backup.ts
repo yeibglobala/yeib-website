@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 
 export interface SubmissionPayload {
-  formType: "general_inquiry" | "partnership" | "application" | "esg_grievance";
+  formType: "general_inquiry" | "partnership" | "application" | "esg_grievance" | "esg_whistleblowing";
   submittedAt: string;
   data: Record<string, unknown>;
 }
