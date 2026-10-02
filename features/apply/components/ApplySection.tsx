@@ -351,8 +351,8 @@ export function ApplySection() {
             {/* Bold Editorial Top Hero */}
             <div className="mb-20 sm:mb-24 md:mb-28 lg:mb-32 max-w-4xl">
               <h1 className="font-[var(--font-asul)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--color-evergreen)] leading-[1.08] mb-6">
-                Work with Nigeria YEIB{" "}
-                <span className="text-[var(--color-tiger-orange)] italic font-serif">Investment Funds</span>
+                Work with the YEIB{" "}
+                <span className="text-[var(--color-tiger-orange)] italic font-serif">Investment Fund</span>
               </h1>
 
               <p className="text-base sm:text-lg text-[var(--color-evergreen)]/80 leading-relaxed font-normal mb-8 max-w-3xl">
@@ -992,7 +992,7 @@ export function ApplySection() {
                     />
                     <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
                       <strong className="font-bold block mb-1">C.2 Non-Binding Submission *</strong>
-                      I understand that this submission is not an application for, or an offer of, financing, and that Nigeria YEIB Investment Funds is under no obligation to proceed.
+                      I understand that this submission is not an application for, or an offer of, financing, and that the YEIB Investment Fund is under no obligation to proceed.
                     </div>
                   </label>
 
@@ -1009,7 +1009,7 @@ export function ApplySection() {
                     />
                     <div className="text-xs sm:text-sm text-[var(--color-evergreen)] leading-relaxed">
                       <strong className="font-bold block mb-1">C.3 NDPA 2023 Data Protection Consent *</strong>
-                      I consent to Nigeria YEIB Investment Funds processing the personal data in this form in accordance with the Nigeria Data Protection Act 2023 and its{" "}
+                      I consent to the YEIB Investment Fund processing the personal data in this form in accordance with the Nigeria Data Protection Act 2023 and its{" "}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -1088,7 +1088,7 @@ export function ApplySection() {
                       <strong className="font-bold block mb-1 text-[var(--color-evergreen)]">
                         C.6 Communications (Optional)
                       </strong>
-                      I would like to receive programmatic updates and notifications from Nigeria YEIB Investment Funds.
+                      I would like to receive programmatic updates and notifications from the YEIB Investment Fund.
                     </div>
                   </label>
                 </div>
@@ -1146,7 +1146,7 @@ export function ApplySection() {
                 Thank you for applying.
               </h2>
               <p className="text-sm text-[var(--color-evergreen)]/80 leading-relaxed max-w-lg mx-auto mb-8">
-                Your initial screening response has been logged into the Nigeria YEIB Investment Funds evaluation pipeline.
+                Your initial screening response has been logged into the YEIB Investment Fund evaluation pipeline.
               </p>
 
               {/* High-Impact Fintech Reference Code Card */}
@@ -1183,7 +1183,7 @@ export function ApplySection() {
 
                 <div className="border-t border-[var(--color-evergreen)]/10 pt-4">
                   <p className="text-xs text-[var(--color-tiger-orange)] font-semibold leading-relaxed">
-                    <strong>Notice:</strong> Nigeria YEIB Investment Funds never charges a fee to apply and does not work through agents who charge for access. Report any payment solicitation to <strong>fraud-report@yeib-manco.com.ng</strong>.
+                    <strong>Notice:</strong> The YEIB Investment Fund never charges a fee to apply and does not work through agents who charge for access. Report any payment solicitation to <strong>fraud-report@yeib-manco.com.ng</strong>.
                   </p>
                 </div>
               </div>
@@ -1239,7 +1239,7 @@ export function ApplySection() {
             </h3>
             <div className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 space-y-3 leading-relaxed">
               <p>
-                In compliance with the <strong>Nigeria Data Protection Act (NDPA) 2023</strong>, Nigeria YEIB Investment Funds collects and processes personal information solely for assessing eligibility, initial screening, and administering investment and capacity-building programs.
+                In compliance with the <strong>Nigeria Data Protection Act (NDPA) 2023</strong>, the YEIB Investment Fund collects and processes personal information solely for assessing eligibility, initial screening, and administering investment and capacity-building programs.
               </p>
               <p>
                 Your personal and corporate data is secured using enterprise-grade encryption. Data is retained for the evaluation period and will not be disclosed to unauthorised third parties without your prior written consent, except where sharing is explicitly authorised with our co-investment partners, Impact Credit Guarantee Limited (ICGL), and vetted business development service providers.
@@ -1275,7 +1275,7 @@ export function ApplySection() {
               YEIB Environmental & Social Exclusion List
             </h3>
             <p className="text-xs text-[var(--color-evergreen)]/70 mb-4">
-              In accordance with our statutory ESG and impact covenants, Nigeria YEIB Investment Funds does not finance or commit capital to entities engaged in:
+              In accordance with our statutory ESG and impact covenants, the YEIB Investment Fund does not finance or commit capital to entities engaged in:
             </p>
             <ul className="text-xs sm:text-sm text-[var(--color-evergreen)]/80 space-y-2 list-disc pl-5 leading-relaxed">
               <li>Production or trade in any product or activity deemed illegal under Nigerian law or international conventions.</li>

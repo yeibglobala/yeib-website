@@ -94,6 +94,6 @@ export const STAKEHOLDER_GROUPS: StakeholderGroup[] = [
     name: "Investors & Development Partners",
     tagline: "An investor or development partner interested in the Funds",
     introCopy:
-      "This form is for development finance institutions, bilateral agencies, foundations, institutional investors, corporates and other partners interested in investing in, co-investing alongside, or partnering with Nigeria YEIB Investment Funds. Submitting this form registers your interest only. It is not an offer of, or invitation to subscribe for, any interest in the Funds.",
+      "This form is for development finance institutions, bilateral agencies, foundations, institutional investors, corporates and other partners interested in investing in, co-investing alongside, or partnering with the YEIB Investment Fund. Submitting this form registers your interest only. It is not an offer of, or invitation to subscribe for, any interest in the Funds.",
   },
 ];

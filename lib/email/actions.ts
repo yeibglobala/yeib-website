@@ -244,7 +244,7 @@ export async function submitApplicationAction(data: ApplicationInput): Promise<F
       senderEmail: data.contactEmail,
       referenceNumber,
       subject: `[YEIB Application] ${trackTitle} - ${applicantName}`,
-      confirmationIntro: `Thank you for submitting your ${trackTitle} application to N-YEIB. Your details have been registered into our pipeline evaluation queue.`,
+      confirmationIntro: `Thank you for submitting your ${trackTitle} application to the YEIB Investment Fund. Your details have been registered into our pipeline evaluation queue.`,
       audienceData: {
         firstName: applicantName,
       },
