@@ -21,6 +21,8 @@ export async function submitGeneralInquiryAction(data: {
     media: "Media & Press",
     general: "General Question",
     careers: "Careers",
+    misconduct: "Misconduct",
+    grievance: "Grievance",
     other: "Other",
   };
   const typeDisplay = inquiryLabels[data.inquiryType] || data.inquiryType || "General Question";

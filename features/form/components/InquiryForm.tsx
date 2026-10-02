@@ -7,12 +7,12 @@ import { motion, Variants } from "framer-motion";
 import { ArrowRight, MessageSquareText, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { submitGeneralInquiryAction } from "@/lib/email/actions";
 
-export function InquiryForm() {
+export function InquiryForm({ initialType = "" }: { initialType?: string }) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    inquiryType: "",
+    inquiryType: initialType,
     message: "",
     honeypot: "",
   });
@@ -192,6 +192,8 @@ export function InquiryForm() {
                     <option value="media">Media & Press</option>
                     <option value="general">General Question</option>
                     <option value="careers">Careers</option>
+                    <option value="misconduct">Misconduct</option>
+                    <option value="grievance">Grievance</option>
                     <option value="other">Other</option>
                   </select>
                 </motion.div>
